@@ -14,22 +14,22 @@ Youch is an error parsing library that pretty prints JavaScript errors on a web-
 
 As you can see in the following screenshots, the Youch output deconstructs the error and properly displays the error message, name, stack trace with source code and a lot more information about the error.
 
-![](./youch_raw_diff.jpg)
-
-<!-- <table>
-  <thead>
-    <tr>
-      <th> Raw stack trace </th>
-      <th> Youch output </th>
-    </tr>
-  </thead>
+<table>
   <tbody>
     <tr>
-      <td><img src="./raw-stack-trace.png" /></td>
-      <td><img src="./youch-output.png" /></td>
+      <td>
+        <strong>Raw stack trace</strong>
+        <img src="./raw-stack-trace.png" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Youch output</strong>
+        <img src="./youch-output.png" />
+      </td>
     </tr>
   </tbody>
-<table> -->
+<table>
 
 ## Basic usage
 
