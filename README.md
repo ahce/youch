@@ -6,7 +6,7 @@
 
 [![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url]
 
-![](./dark-mode.png)
+![](./assets/banner.png)
 
 ## What is Youch?
 
@@ -19,13 +19,21 @@ As you can see in the following screenshots, the Youch output deconstructs the e
     <tr>
       <td>
         <strong>Raw stack trace</strong>
-        <img src="./raw-stack-trace.png" />
       </td>
     </tr>
     <tr>
       <td>
-        <strong>Youch output</strong>
-        <img src="./youch-output.png" />
+        <img src="./assets/raw-stack-trace.png" />
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Youch Output</strong>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="./assets/youch-output.jpg" />
       </td>
     </tr>
   </tbody>
@@ -68,13 +76,7 @@ Let's de-construct the error page and understand what each section of the web pa
 
 ### Error info
 
-<table>
-  <tbody>
-    <tr>
-      <td><img src="./error-info.png" /></td>
-    </tr>
-  </tbody>
-<table>
+![](./assets/error-info.png)
 
 The top-most section displays the Error info, which includes:
 
@@ -88,19 +90,19 @@ See: [How to override the Error info template]()
 
 The Stack trace section displays individual frames as accordion sections and clicking on the section title will reveal the frame source code. The soure code is not available for native stack frames that are part of the Node.js, Deno, and Bun internals.
 
-![](./error-stack.png)
+![](./assets/error-stack.png)
 
 Clicking the `Raw` button displays the Error object in its raw form with all the error properties (and not just the stack trace).
 
 You might find the raw output helpful for errors that contains additional properties. For example: HTTP client libraries like Axios, Got, Undici and others usually contain the HTTP response details within the error object.
 
-![](./stack-raw-output.png)
+![](./assets/stack-raw-output.png)
 
 ### Error cause
 
 [Error cause](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause) is a standard way to bubble errors while wrapping them within a generic error. Youch displays the error cause as an interactive property within its own section.
 
-![](./error-cause.png)
+![](./assets/error-cause.png)
 
 ### Metadata
 
