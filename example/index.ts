@@ -2,6 +2,7 @@ import { createServer } from 'node:http'
 import cookie from 'cookie'
 import { Youch } from '../src/youch.js'
 import { getUser } from './get_user.js'
+import { readFile } from './flydrive.js'
 
 const HTTP_STATUSES = [
   {
@@ -240,7 +241,7 @@ const HTTP_STATUSES = [
 
 createServer(async (req, res) => {
   try {
-    await getUser()
+    await readFile()
   } catch (error) {
     const statusCode = error.status ?? 500
     const status = HTTP_STATUSES.find((httpStatus) => httpStatus.code === statusCode)
