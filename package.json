@@ -1,7 +1,7 @@
 {
   "name": "youch",
   "description": "Pretty print JavaScript errors on the Web and the Terminal",
-  "version": "3.3.4",
+  "version": "4.0.0-beta.0",
   "engines": {
     "node": ">=20.6.0"
   },
