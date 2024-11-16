@@ -76,7 +76,12 @@ Let's de-construct the error page and understand what each section of the web pa
 
 ### Error info
 
-![](./assets/error-info.png)
+<details>
+  <summary>View image</summary>
+  
+  ![](./assets/error-info.png)
+
+</details>
 
 The top-most section displays the Error info, which includes:
 
@@ -88,21 +93,38 @@ See: [How to override the Error info template]()
 
 ### Stack trace
 
+<details>
+  <summary>View image</summary>
+  
+  ![](./assets/error-stack.png)
+
+</details>
+
 The Stack trace section displays individual frames as accordion sections and clicking on the section title will reveal the frame source code. The soure code is not available for native stack frames that are part of the Node.js, Deno, and Bun internals.
 
-![](./assets/error-stack.png)
+### Raw output
+
+<details>
+  <summary>View image</summary>
+  
+  ![](./assets/stack-raw-output.png)
+
+</details>
 
 Clicking the `Raw` button displays the Error object in its raw form with all the error properties (and not just the stack trace).
 
 You might find the raw output helpful for errors that contains additional properties. For example: HTTP client libraries like Axios, Got, Undici and others usually contain the HTTP response details within the error object.
 
-![](./assets/stack-raw-output.png)
-
 ### Error cause
 
-[Error cause](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause) is a standard way to bubble errors while wrapping them within a generic error. Youch displays the error cause as an interactive property within its own section.
+<details>
+  <summary>View image</summary>
+  
+  ![](./assets/error-cause.png)
 
-![](./assets/error-cause.png)
+</details>
+
+[Error cause](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause) is a standard way to bubble errors while wrapping them within a generic error. Youch displays the error cause as an interactive property within its own section.
 
 ### Metadata
 
@@ -133,31 +155,54 @@ Calling the `youch.group` method multiple times with the same group name will me
 
 ## Using a custom source code loader
 
-The Error info is displayed using the [ErrorInfo](https://github.com/poppinss/youch/blob/4.x/src/templates/error-info/main.ts) component and you can override it with a custom component as follows.
+Youch reads the source code of files within the stacktrace using the Node.js `fs` module. However, you can override this default and provide a custom source loader using the `youch.sourceLoader` method.
+
+> Note: The `sourceLoader` is called for every frame within the stack traces. Therefore you must perform the needed checks before attempting to read the source code of a file.
+>
+> For example, you must not attempt to read the source code for fileNames pointing to native code.
 
 ```ts
-import { BaseComponent } from 'youch/component'
-import { ErrorInfoProps } from 'youch/types'
+import { Youch } from 'youch'
+const youch = new Youch(options)
 
-class MyErrorInfo extends BaseComponent<ErrorInfoProps> {
-  render() {}
-}
-
-const youch = new Youch({ title: 'Something went wrong' })
-youch.use('errorInfo', new MyErrorInfo())
+youch.sourceLoader(async (stackFrame) => {
+  if (stackFrame.type !== 'native') {
+    stackFrame.source = await getSourceForFile(stackFrame.fileName)
+  }
+})
 ```
 
 ## Injecting custom styles
 
-## Attaching metadata
+You may inject custom CSS styles using the `youch.injectStyles` method. The styles will be injected after the styles from the inbuilt templates.
+
+```ts
+import { Youch } from 'youch'
+const youch = new Youch(options)
+
+youch.injectStyles(`
+  :root {
+    // Override variables for light mode
+    --surface-bg: #fff;
+    --surface-fg: #000;
+    --muted-fg: #999;
+  }
+
+  html.dark {
+    // Override variables for dark mode
+  }
+`)
+```
 
 ## Overriding syntax highlighter
 
-## Overriding templates
+Youch uses the [speed-highlight](https://github.com/speed-highlight/core), which is lightweight code highlighting library for JavaScript. If you like you override the syntax highlighter, you can do so by registering a custom component for the `errorStackSource` template.
 
-## Pre-parsing errors
+In the following example, we use [Shiki](https://shiki.matsu.io/) to perform syntax highlighting using a custom component.
 
-## Transforming parser error
+```ts
+
+```
 
 ## Contributing
 

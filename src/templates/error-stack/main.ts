@@ -11,6 +11,7 @@ import { dump, themes } from '@poppinss/dumper/html'
 import type { ParsedError, StackFrame } from 'youch-core/types'
 
 import { BaseComponent } from '../../component.js'
+import { ErrorStackProps } from '../../types.js'
 
 /**
  * Known editors and their URLs to open the file within
@@ -30,11 +31,7 @@ const EDITORS: Record<string, string> = {
  * Displays the formatted and raw error stack along with the
  * source code for individual stack frames
  */
-export class ErrorStack extends BaseComponent<{
-  error: ParsedError
-  ide: string
-  sourceCodeRenderer: (error: ParsedError, frame: StackFrame) => Promise<string>
-}> {
+export class ErrorStack extends BaseComponent<ErrorStackProps> {
   cssFile = new URL('./style.css', import.meta.url)
   scriptFile = new URL('./script.js', import.meta.url)
 
@@ -127,7 +124,7 @@ export class ErrorStack extends BaseComponent<{
     frame: StackFrame,
     index: number,
     expandAtIndex: number,
-    props: ErrorStack['$props']
+    props: ErrorStackProps
   ) {
     const id = `frame-${index + 1}`
     const label = frame.type === 'app' ? '<span class="frame-label">In App</span>' : ''
@@ -144,7 +141,7 @@ export class ErrorStack extends BaseComponent<{
     </li>`
   }
 
-  async render(props: ErrorStack['$props']): Promise<string> {
+  async render(props: ErrorStackProps): Promise<string> {
     const frames = await Promise.all(
       props.error.frames.map((frame, index) => {
         return this.#renderStackFrame(

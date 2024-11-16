@@ -19,19 +19,27 @@ import { ErrorCause } from './templates/error-cause/main.js'
 import { ErrorStack } from './templates/error-stack/main.js'
 import { ErrorMetadata } from './templates/error_metadata/main.js'
 import { ErrorStackSource } from './templates/error-stack-source/main.js'
+import type {
+  LayoutProps,
+  ErrorInfoProps,
+  ErrorCauseProps,
+  ErrorStackProps,
+  ErrorMetadataProps,
+  ErrorStackSourceProps,
+} from './types.js'
 
 /**
  * Collection of known templates. Only these templates can be
  * rendered using the Templates collection
  */
 export type KnownTemplates = {
-  header: BaseComponent<Header['$props']>
-  layout: BaseComponent<Layout['$props']>
-  errorInfo: BaseComponent<ErrorInfo['$props']>
-  errorStack: BaseComponent<ErrorStack['$props']>
-  errorStackSource: BaseComponent<ErrorStackSource['$props']>
-  errorCause: BaseComponent<ErrorCause['$props']>
-  errorMetadata: BaseComponent<ErrorMetadata['$props']>
+  header: BaseComponent
+  layout: BaseComponent<LayoutProps>
+  errorInfo: BaseComponent<ErrorInfoProps>
+  errorStack: BaseComponent<ErrorStackProps>
+  errorStackSource: BaseComponent<ErrorStackSourceProps>
+  errorCause: BaseComponent<ErrorCauseProps>
+  errorMetadata: BaseComponent<ErrorMetadataProps>
 }
 
 /**

@@ -7,7 +7,57 @@
  * file that was distributed with this source code.
  */
 
+import type { ParsedError, StackFrame } from 'youch-core/types'
+import type { Metadata } from './metadata.js'
+
 export * from 'youch-core/types'
+
+/**
+ * Props accepted by the Layout component
+ */
+export type LayoutProps = {
+  title: string
+  children: () => string | Promise<string>
+}
+
+/**
+ * Props accepted by the Error stack source component
+ */
+export type ErrorStackSourceProps = {
+  error: ParsedError
+  frame: StackFrame
+}
+
+/**
+ * Props accepted by the Error stack component
+ */
+export type ErrorStackProps = {
+  error: ParsedError
+  ide: string
+  sourceCodeRenderer: (error: ParsedError, frame: StackFrame) => Promise<string>
+}
+
+/**
+ * Props accepted by the Error info component
+ */
+export type ErrorInfoProps = {
+  title: string
+  error: ParsedError
+}
+
+/**
+ * Props accepted by the Error cause component
+ */
+export type ErrorCauseProps = {
+  error: ParsedError
+}
+
+/**
+ * Props accepted by the Error metadata component
+ */
+export type ErrorMetadataProps = {
+  metadata: Metadata
+}
 
 /**
  * Error metadata row represents a key-value pair

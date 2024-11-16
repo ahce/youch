@@ -21,6 +21,7 @@ test.group('Templates', () => {
     const templates = new Templates(true)
     const html = await templates.render({
       title: 'Internal Server Error',
+      metadata: new Metadata(),
       error: await new ErrorParser().parse(new Error('Something went wrong')),
     })
 
@@ -40,6 +41,7 @@ test.group('Templates', () => {
     const templates = new Templates(true)
     const html = await templates.render({
       title: 'Internal Server Error',
+      metadata: new Metadata(),
       error: await new ErrorParser().parse(error),
     })
 
@@ -56,6 +58,7 @@ test.group('Templates', () => {
     const templates = new Templates(true)
     const html = await templates.render({
       title: 'Internal Server Error',
+      metadata: new Metadata(),
       error: await new ErrorParser().parse(error),
     })
 
@@ -73,6 +76,7 @@ test.group('Templates', () => {
     const templates = new Templates(true)
     const html = await templates.render({
       title: 'Internal Server Error',
+      metadata: new Metadata(),
       error: await new ErrorParser().parse(error),
     })
 
@@ -90,6 +94,7 @@ test.group('Templates', () => {
 
     const html = await templates.render({
       title: 'Internal Server Error',
+      metadata: new Metadata(),
       error: await new ErrorParser().parse(error),
     })
 
@@ -110,6 +115,7 @@ test.group('Templates', () => {
 
     const html = await templates.render({
       title: 'Internal Server Error',
+      metadata: new Metadata(),
       error: await new ErrorParser().parse(error),
     })
 

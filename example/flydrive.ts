@@ -21,6 +21,6 @@ const disk = new Disk(
   })
 )
 
-export function readFile() {
-  return disk.get('some-file-name')
+export async function run() {
+  await disk.get('some-file-name')
 }

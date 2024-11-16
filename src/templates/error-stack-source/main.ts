@@ -8,10 +8,10 @@
  */
 
 import { extname } from 'node:path'
-import type { ParsedError, StackFrame } from 'youch-core/types'
 import { highlightText, type ShjLanguage } from '@speed-highlight/core'
 
 import { BaseComponent } from '../../component.js'
+import type { ErrorStackSourceProps } from '../../types.js'
 
 /**
  * Known languages where we expect the errors to happen. All other source
@@ -33,13 +33,10 @@ const LANGS_MAP: Record<string, ShjLanguage> = {
  * Pretty prints the stack frame source code with syntax
  * highlighting.
  */
-export class ErrorStackSource extends BaseComponent<{
-  error: ParsedError
-  frame: StackFrame
-}> {
+export class ErrorStackSource extends BaseComponent<ErrorStackSourceProps> {
   cssFile = new URL('./style.css', import.meta.url)
 
-  async render(props: ErrorStackSource['$props']): Promise<string> {
+  async render(props: ErrorStackSourceProps): Promise<string> {
     const frame = props.frame
 
     /**

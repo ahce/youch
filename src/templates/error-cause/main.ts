@@ -7,17 +7,15 @@
  * file that was distributed with this source code.
  */
 
-import { ParsedError } from 'youch-core/types'
 import { dump, themes } from '@poppinss/dumper/html'
 
 import { BaseComponent } from '../../component.js'
+import type { ErrorCauseProps } from '../../types.js'
 
 /**
  * Displays the Error cause as a formatted value
  */
-export class ErrorCause extends BaseComponent<{
-  error: ParsedError
-}> {
+export class ErrorCause extends BaseComponent<ErrorCauseProps> {
   cssFile = new URL('./style.css', import.meta.url)
 
   async render(props: ErrorCause['$props']): Promise<string> {

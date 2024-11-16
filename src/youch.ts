@@ -9,9 +9,10 @@
 
 import { ErrorParser } from 'youch-core'
 import type { Parser, SourceLoader, Transformer } from 'youch-core/types'
+
 import { Metadata } from './metadata.js'
 import { Templates } from './templates.js'
-import { YouchOptions } from './types.js'
+import type { YouchOptions } from './types.js'
 
 /**
  * Youch exposes the API to render errors to HTML output
@@ -31,8 +32,7 @@ export class Youch {
   templates = new Templates(false)
 
   /**
-   * Attach metadata to the error and render it within the
-   * HTML output
+   * Define metadata to be displayed alongside the error output
    */
   metadata = new Metadata()
 

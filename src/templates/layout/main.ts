@@ -8,6 +8,7 @@
  */
 
 import { BaseComponent } from '../../component.js'
+import type { LayoutProps } from '../../types.js'
 
 /**
  * Layout component renders the HTML structure for the document
@@ -16,14 +17,11 @@ import { BaseComponent } from '../../component.js'
  * You can define a custom Layout if you want to modify the HTML
  * structure or the CSS variables for the colors.
  */
-export class Layout extends BaseComponent<{
-  title: string
-  children: () => string | Promise<string>
-}> {
+export class Layout extends BaseComponent<LayoutProps> {
   cssFile = new URL('./style.css', import.meta.url)
   scriptFile = new URL('./script.js', import.meta.url)
 
-  async render(props: Layout['$props']): Promise<string> {
+  async render(props: LayoutProps): Promise<string> {
     return `<!DOCTYPE html>
     <html lang="en">
       <head>

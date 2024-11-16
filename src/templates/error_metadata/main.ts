@@ -9,18 +9,15 @@
 
 import { dump, themes } from '@poppinss/dumper/html'
 
-import { Metadata } from '../../metadata.js'
-import { ErrorMetadataRow } from '../../types.js'
 import { BaseComponent } from '../../component.js'
-
-const PRIMITIVES = ['string', 'boolean', 'number', 'undefined']
+import { ErrorMetadataProps, ErrorMetadataRow } from '../../types.js'
 
 /**
  * Displays the error metadata as cards
  */
-export class ErrorMetadata extends BaseComponent<{
-  metadata: Metadata
-}> {
+export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
+  #primitives = ['string', 'boolean', 'number', 'undefined']
+
   /**
    * Formats the error row value
    */
@@ -29,7 +26,7 @@ export class ErrorMetadata extends BaseComponent<{
       return dump(value, { styles: themes.cssVariables })
     }
 
-    if (PRIMITIVES.includes(typeof value) || value === null) {
+    if (this.#primitives.includes(typeof value) || value === null) {
       return value
     }
 
@@ -46,11 +43,11 @@ export class ErrorMetadata extends BaseComponent<{
         ${rows
           .map((row) => {
             return `<tr>
-            <td class="table-key">${row.key}</td>
-            <td class="table-value">
-              ${this.#formatRowValue(row.value, row.dump)}
-            </td>
-          </tr>`
+              <td class="table-key">${row.key}</td>
+              <td class="table-value">
+                ${this.#formatRowValue(row.value, row.dump)}
+              </td>
+            </tr>`
           })
           .join('\n')}
       </tbody>
@@ -74,31 +71,31 @@ export class ErrorMetadata extends BaseComponent<{
     group: string,
     sections: { [section: string]: ErrorMetadataRow | ErrorMetadataRow[] }
   ) {
-    return `<div class="card">
-      <div class="card-heading">
-        <h3 class="card-title">${group}</h3>
+    return `<section>
+      <div class="card">
+        <div class="card-heading">
+          <h3 class="card-title">${group}</h3>
+        </div>
+        <div class="card-body">
+          ${Object.keys(sections)
+            .map((section) => this.#renderSection(section, sections[section]))
+            .join('\n')}
+        </div>
       </div>
-      <div class="card-body">
-        ${Object.keys(sections)
-          .map((section) => {
-            return this.#renderSection(section, sections[section])
-          })
-          .join('\n')}
-      </div>
-    </div>`
+    </section>`
   }
 
   /**
    * Renders erorr metadata groups
    */
-  async render(props: ErrorMetadata['$props']): Promise<string> {
+  async render(props: ErrorMetadataProps): Promise<string> {
     const groups = props.metadata.toJSON()
-    return `<section>
-      ${Object.keys(groups)
-        .map((group) => {
-          return this.#renderGroup(group, groups[group])
-        })
-        .join('\n')}
-    </section>`
+    const groupsNames = Object.keys(groups)
+
+    if (!groupsNames.length) {
+      return ''
+    }
+
+    return groupsNames.map((group) => this.#renderGroup(group, groups[group])).join('\n')
   }
 }
