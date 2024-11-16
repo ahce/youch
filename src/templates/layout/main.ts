@@ -8,6 +8,7 @@
  */
 
 import { BaseComponent } from '../../component.js'
+import { publicDirURL } from '../../public_dir.js'
 import type { LayoutProps } from '../../types.js'
 
 /**
@@ -18,8 +19,8 @@ import type { LayoutProps } from '../../types.js'
  * structure or the CSS variables for the colors.
  */
 export class Layout extends BaseComponent<LayoutProps> {
-  cssFile = new URL('./style.css', import.meta.url)
-  scriptFile = new URL('./script.js', import.meta.url)
+  cssFile = new URL('./layout/style.css', publicDirURL)
+  scriptFile = new URL('./layout/script.js', publicDirURL)
 
   async render(props: LayoutProps): Promise<string> {
     return `<!DOCTYPE html>

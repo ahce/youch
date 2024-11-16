@@ -9,6 +9,7 @@
 
 import type { ParsedError, StackFrame } from 'youch-core/types'
 import type { Metadata } from './metadata.js'
+import type { BaseComponent } from './component.js'
 
 export * from 'youch-core/types'
 
@@ -118,4 +119,18 @@ export type YouchOptions = {
    * - %l is the line number placeholder
    */
   ide?: string
+}
+
+/**
+ * Collection of known templates. Only these templates can be
+ * rendered using the Templates collection
+ */
+export type YouchTemplates = {
+  header: BaseComponent
+  layout: BaseComponent<LayoutProps>
+  errorInfo: BaseComponent<ErrorInfoProps>
+  errorStack: BaseComponent<ErrorStackProps>
+  errorStackSource: BaseComponent<ErrorStackSourceProps>
+  errorCause: BaseComponent<ErrorCauseProps>
+  errorMetadata: BaseComponent<ErrorMetadataProps>
 }

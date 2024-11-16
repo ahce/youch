@@ -11,6 +11,7 @@ import { extname } from 'node:path'
 import { highlightText, type ShjLanguage } from '@speed-highlight/core'
 
 import { BaseComponent } from '../../component.js'
+import { publicDirURL } from '../../public_dir.js'
 import type { ErrorStackSourceProps } from '../../types.js'
 
 /**
@@ -34,7 +35,7 @@ const LANGS_MAP: Record<string, ShjLanguage> = {
  * highlighting.
  */
 export class ErrorStackSource extends BaseComponent<ErrorStackSourceProps> {
-  cssFile = new URL('./style.css', import.meta.url)
+  cssFile = new URL('./error_stack_source/style.css', publicDirURL)
 
   async render(props: ErrorStackSourceProps): Promise<string> {
     const frame = props.frame

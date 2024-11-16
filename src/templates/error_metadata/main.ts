@@ -10,7 +10,7 @@
 import { dump, themes } from '@poppinss/dumper/html'
 
 import { BaseComponent } from '../../component.js'
-import { ErrorMetadataProps, ErrorMetadataRow } from '../../types.js'
+import type { ErrorMetadataProps, ErrorMetadataRow } from '../../types.js'
 
 /**
  * Displays the error metadata as cards

@@ -8,6 +8,7 @@
  */
 
 import { BaseComponent } from '../../component.js'
+import { publicDirURL } from '../../public_dir.js'
 
 const DARK_MODE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M0 0h24v24H0z" stroke="none"/><path d="M12 3h.393a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 2.992z"/></svg>`
 
@@ -18,8 +19,8 @@ const LIGHT_MODE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="tru
  * theme-switcher for now
  */
 export class Header extends BaseComponent {
-  cssFile = new URL('./style.css', import.meta.url)
-  scriptFile = new URL('./script.js', import.meta.url)
+  cssFile = new URL('./header/style.css', publicDirURL)
+  scriptFile = new URL('./header/script.js', publicDirURL)
 
   async render(): Promise<string> {
     return `<header id="header">

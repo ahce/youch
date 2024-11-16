@@ -1,7 +1,7 @@
 {
   "name": "youch",
-  "description": "",
-  "version": "",
+  "description": "Pretty print JavaScript errors on the Web and the Terminal",
+  "version": "3.3.4",
   "engines": {
     "node": ">=20.6.0"
   },
@@ -9,11 +9,14 @@
   "files": [
     "build",
     "!build/bin",
+    "!build/example",
     "!build/tests"
   ],
   "main": "build/index.js",
   "exports": {
-    ".": "./build/index.js"
+    ".": "./build/index.js",
+    "./types": "./build/src/types.js",
+    "./templates/*": "./build/templates/*"
   },
   "scripts": {
     "pretest": "npm run lint",
@@ -22,8 +25,9 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "precompile": "npm run lint",
+    "copy:assets": "copyfiles --up=1 src/public/**/* build",
     "compile": "tsup-node && tsc --emitDeclarationOnly --declaration",
-    "build": "npm run compile",
+    "build": "npm run compile && npm run copy:assets",
     "version": "npm run build",
     "prepublishOnly": "npm run build",
     "release": "release-it",
@@ -50,6 +54,7 @@
     "axios": "^1.7.7",
     "c8": "^10.1.2",
     "cookie": "^1.0.1",
+    "copyfiles": "^2.4.1",
     "eslint": "^9.14.0",
     "flydrive": "^1.1.0",
     "jsdom": "^25.0.1",
@@ -77,13 +82,15 @@
   },
   "tsup": {
     "entry": [
-      "index.ts"
+      "index.ts",
+      "src/types.ts",
+      "src/templates/**/*.ts"
     ],
     "outDir": "./build",
     "clean": true,
     "format": "esm",
     "dts": false,
-    "sourcemap": true,
+    "sourcemap": false,
     "target": "esnext"
   },
   "release-it": {

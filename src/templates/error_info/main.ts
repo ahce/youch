@@ -8,6 +8,7 @@
  */
 
 import { BaseComponent } from '../../component.js'
+import { publicDirURL } from '../../public_dir.js'
 import type { ErrorInfoProps } from '../../types.js'
 
 const ERROR_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="24" height="24" fill="none"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7v6m0 4.01.01-.011M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10Z"/></svg>`
@@ -19,7 +20,7 @@ const HINT_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true
  * error name, error message and the hint.
  */
 export class ErrorInfo extends BaseComponent<ErrorInfoProps> {
-  cssFile = new URL('./style.css', import.meta.url)
+  cssFile = new URL('./error_info/style.css', publicDirURL)
 
   async render(props: ErrorInfoProps): Promise<string> {
     return `<section>

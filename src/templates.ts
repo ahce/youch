@@ -12,35 +12,14 @@ import { createScript, createStyleSheet } from '@poppinss/dumper/html'
 
 import { Metadata } from './metadata.js'
 import { BaseComponent } from './component.js'
+import type { YouchTemplates } from './types.js'
 import { Header } from './templates/header/main.js'
 import { Layout } from './templates/layout/main.js'
-import { ErrorInfo } from './templates/error-info/main.js'
-import { ErrorCause } from './templates/error-cause/main.js'
-import { ErrorStack } from './templates/error-stack/main.js'
+import { ErrorInfo } from './templates/error_info/main.js'
+import { ErrorCause } from './templates/error_cause/main.js'
+import { ErrorStack } from './templates/error_stack/main.js'
 import { ErrorMetadata } from './templates/error_metadata/main.js'
-import { ErrorStackSource } from './templates/error-stack-source/main.js'
-import type {
-  LayoutProps,
-  ErrorInfoProps,
-  ErrorCauseProps,
-  ErrorStackProps,
-  ErrorMetadataProps,
-  ErrorStackSourceProps,
-} from './types.js'
-
-/**
- * Collection of known templates. Only these templates can be
- * rendered using the Templates collection
- */
-export type KnownTemplates = {
-  header: BaseComponent
-  layout: BaseComponent<LayoutProps>
-  errorInfo: BaseComponent<ErrorInfoProps>
-  errorStack: BaseComponent<ErrorStackProps>
-  errorStackSource: BaseComponent<ErrorStackSourceProps>
-  errorCause: BaseComponent<ErrorCauseProps>
-  errorMetadata: BaseComponent<ErrorMetadataProps>
-}
+import { ErrorStackSource } from './templates/error_stack_source/main.js'
 
 /**
  * A super lightweight templates collection that allows composing
@@ -66,7 +45,7 @@ export type KnownTemplates = {
  * ```
  */
 export class Templates {
-  #knownTemplates: KnownTemplates
+  #knownTemplates: YouchTemplates
   #styles: Map<string, string> = new Map([['global', createStyleSheet()]])
   #scripts: Map<string, string> = new Map([['global', createScript()]])
 
@@ -114,7 +93,7 @@ export class Templates {
    * Collects styles and scripts for components as we render
    * them.
    */
-  async #collectStylesAndScripts(templateName: keyof KnownTemplates) {
+  async #collectStylesAndScripts(templateName: keyof YouchTemplates) {
     /**
      * Collect styles only once for a given template
      */
@@ -139,9 +118,9 @@ export class Templates {
   /**
    * Renders a known template by its name
    */
-  async #renderTmpl<K extends keyof KnownTemplates>(
+  async #renderTmpl<K extends keyof YouchTemplates>(
     templateName: K,
-    props: KnownTemplates[K]['$props']
+    props: YouchTemplates[K]['$props']
   ): Promise<string> {
     const component: BaseComponent<any> = this.#knownTemplates[templateName]
     if (!component) {
@@ -157,7 +136,7 @@ export class Templates {
    * Overriding components allows you control the HTML layout, styles and
    * the frontend scripts of an HTML fragment.
    */
-  use<K extends keyof KnownTemplates>(templateName: K, component: KnownTemplates[K]): this {
+  use<K extends keyof YouchTemplates>(templateName: K, component: YouchTemplates[K]): this {
     this.#knownTemplates[templateName] = component
     return this
   }

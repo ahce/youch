@@ -8,10 +8,11 @@
  */
 
 import { dump, themes } from '@poppinss/dumper/html'
-import type { ParsedError, StackFrame } from 'youch-core/types'
+import type { StackFrame } from 'youch-core/types'
 
 import { BaseComponent } from '../../component.js'
-import { ErrorStackProps } from '../../types.js'
+import { publicDirURL } from '../../public_dir.js'
+import type { ErrorStackProps } from '../../types.js'
 
 /**
  * Known editors and their URLs to open the file within
@@ -32,8 +33,8 @@ const EDITORS: Record<string, string> = {
  * source code for individual stack frames
  */
 export class ErrorStack extends BaseComponent<ErrorStackProps> {
-  cssFile = new URL('./style.css', import.meta.url)
-  scriptFile = new URL('./script.js', import.meta.url)
+  cssFile = new URL('./error_stack/style.css', publicDirURL)
+  scriptFile = new URL('./error_stack/script.js', publicDirURL)
 
   /**
    * Light weight HTML escape helper
