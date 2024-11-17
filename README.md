@@ -204,7 +204,100 @@ Youch uses the [speed-highlight](https://github.com/speed-highlight/core), which
 In the following example, we use [Shiki](https://shiki.matsu.io/) to perform syntax highlighting using a custom component.
 
 ```ts
+import { codeToHtml } from 'shiki'
+import { BaseComponent } from 'youch'
+import { ErrorStackSourceProps } from 'youch/types'
 
+/**
+ * A custom component that uses shiki to render the source
+ * code snippet for a stack frame
+ */
+class CustomErrorStackSource extends BaseComponent<ErrorStackSourceProps> {
+  /**
+   * Return the styles you want to inject from this
+   * component
+   */
+  async getStyles() {
+    return `
+    html.dark .shiki {
+      background-color: var(--shiki-dark-bg) !important;
+    }
+
+    html.dark .shiki span {
+      color: var(--shiki-dark) !important;
+      font-weight: var(--shiki-dark-font-weight) !important;
+      text-decoration: var(--shiki-dark-text-decoration) !important;
+    }
+
+    pre.shiki {
+      padding: 16px 0;
+    }
+
+    code .line {
+      position: relative;
+      padding: 0 16px 0 48px;
+      height: 24px;
+      line-height: 24px;
+      width: 100%;
+      display: inline-block;
+    }
+
+    code .line:before {
+      position: absolute;
+      content: attr(data-line);
+      opacity: 0.5;
+      text-align: right;
+      margin-right: 5px;
+      left: 0;
+      width: 32px;
+    }
+
+    code .highlighted {
+      background-color: #ff000632;
+    }
+
+    html.dark code .highlighted {
+      background-color: #ff173f2d !important;
+    }`
+  }
+
+  async render(props: ErrorStackSourceProps) {
+    if (props.frame.source) {
+      const code = props.frame.source.map(({ chunk }) => chunk).join('\n')
+
+      return codeToHtml(code, {
+        lang: 'typescript',
+        themes: {
+          light: 'min-light',
+          dark: 'vitesse-dark',
+        },
+        transformers: [
+          {
+            line(node, line) {
+              const lineNumber = props.frame.source![line - 1].lineNumber
+              node.properties['data-line'] = lineNumber
+
+              if (lineNumber === props.frame.lineNumber) {
+                this.addClassToHast(node, 'highlighted')
+              }
+            },
+          },
+        ],
+      })
+    }
+
+    return ''
+  }
+}
+
+const youch = new Youch()
+
+/**
+ * Register the component
+ */
+youch.templates.use('errorStackSource', new CustomErrorStackSource(false))
+
+const html = await youch.render(error)
 ```
 
 ## Contributing
