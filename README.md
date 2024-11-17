@@ -44,13 +44,13 @@ As you can see in the following screenshots, the Youch output deconstructs the e
 Install the package from the npm packages registry as follows.
 
 ```sh
-npm i youch
+npm i youch@beta
 
 # Yarn
-yarn add youch
+yarn add youch@beta
 
 # Pnpm
-pnpm add youch
+pnpm add youch@beta
 ```
 
 Once installed. You can render errors to HTML output using the `youch.render` method. The HTML output is self-contained and does not require separate CSS or JavaScript files.
