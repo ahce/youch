@@ -58,15 +58,18 @@ Once installed. You can render errors to HTML output using the `youch.render` me
 In the following example, we use the `hono` framework and pretty print all the errors in development using Youch. You can replace Hono with any other framework of your choice.
 
 ```ts
+import { Hono } from 'hono'
 import { Youch } from 'youch'
+
+const app = new Hono()
 const IN_DEV = process.env.NODE_ENV === 'development'
 
-app.onError((err, c) => {
+app.onError(async (error, c) => {
   if (IN_DEV) {
-    const youch = new Youch({ title: 'Something went wrong' })
-    const html = await youch.render(err)
-    return html
+    const html = await youch.render(error)
+    return c.html(html)
   }
+  return c.text(error.message)
 })
 ```
 

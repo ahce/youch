@@ -65,7 +65,7 @@ export class Templates {
    * Returns a collection of style and script tags to dump
    * inside the document HEAD.
    */
-  #getStylesAndScripts() {
+  #getStylesAndScripts(cspNonce?: string) {
     /**
      * Keeping injected styles separate from the rest of the
      * styles and scripts, so that we can append them at
@@ -74,16 +74,17 @@ export class Templates {
     let injectedStyles: string = ''
     const styles: string[] = []
     const scripts: string[] = []
+    const cspNonceAttr = cspNonce ? ` nonce="${cspNonce}"` : ''
 
     this.#styles.forEach((bucket, name) => {
       if (name === 'injected') {
-        injectedStyles = `<style id="${name}-styles">${bucket}</style>`
+        injectedStyles = `<style id="${name}-styles"${cspNonceAttr}>${bucket}</style>`
       } else {
-        styles.push(`<style id="${name}-styles">${bucket}</style>`)
+        styles.push(`<style id="${name}-styles"${cspNonceAttr}>${bucket}</style>`)
       }
     })
     this.#scripts.forEach((bucket, name) => {
-      scripts.push(`<script id="${name}-script">${bucket}</script>`)
+      scripts.push(`<script id="${name}-script"${cspNonceAttr}>${bucket}</script>`)
     })
 
     return { styles: `${styles.join('\n')}\n${injectedStyles}`, scripts: scripts.join('\n') }
@@ -156,16 +157,29 @@ export class Templates {
   /**
    * Returns the HTML output for the given parsed error
    */
-  async render(props: { title: string; ide?: string; error: ParsedError; metadata: Metadata }) {
+  async render(props: {
+    title: string
+    ide?: string
+    cspNonce?: string
+    error: ParsedError
+    metadata: Metadata
+  }) {
     const html = await this.#renderTmpl('layout', {
       title: props.title,
+      ide: props.ide,
+      cspNonce: props.cspNonce,
       children: async () => {
-        const header = await this.#renderTmpl('header', undefined)
+        const header = await this.#renderTmpl('header', props)
         const info = await this.#renderTmpl('errorInfo', props)
         const stackTrace = await this.#renderTmpl('errorStack', {
           ide: process.env.EDITOR ?? 'vscode',
           sourceCodeRenderer: (error, frame) => {
-            return this.#renderTmpl('errorStackSource', { error, frame })
+            return this.#renderTmpl('errorStackSource', {
+              error,
+              frame,
+              ide: props.ide,
+              cspNonce: props.cspNonce,
+            })
           },
           ...props,
         })
@@ -175,7 +189,7 @@ export class Templates {
       },
     })
 
-    const { scripts, styles } = this.#getStylesAndScripts()
+    const { scripts, styles } = this.#getStylesAndScripts(props.cspNonce)
     return html.replace('<!-- STYLES -->', styles).replace('<!-- SCRIPTS -->', scripts)
   }
 }

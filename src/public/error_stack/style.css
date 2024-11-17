@@ -81,6 +81,37 @@ html.dark {
   font-family: var(--font-sans);
 }
 
+.stack-frame-extras {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.stack-frame-toggle-indicator {
+  border: none;
+  border-radius: var(--radius);
+  height: 22px;
+  width: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+.stack-frame-toggle-indicator:hover {
+  border: 1px solid var(--switch-border);
+}
+
+.stack-frame-toggle-indicator svg {
+  width: 16px;
+  display: block;
+}
+
+.stack-frame.expanded .stack-frame-toggle-indicator svg {
+  transform: rotate(180deg);
+}
+
 .frame-label {
   padding: 0px 8px;
   border-radius: 20px;

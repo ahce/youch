@@ -14,6 +14,10 @@ import { BaseComponent } from '../../component.js'
 import { publicDirURL } from '../../public_dir.js'
 import type { ErrorStackProps } from '../../types.js'
 
+const CHEVIRON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="24" height="24" stroke-width="2">
+  <path d="M6 9l6 6l6 -6"></path>
+</svg>`
+
 /**
  * Known editors and their URLs to open the file within
  * the code editor
@@ -108,14 +112,15 @@ export class ErrorStack extends BaseComponent<ErrorStackProps> {
       : ''
     const loc = `<span>at line <code>${frame.lineNumber}:${frame.columnNumber}</code></span>`
 
-    if (frame.type === 'native') {
-      return `<div class="stack-frame-location">
+    if (frame.type !== 'native' && frame.source) {
+      return `<button class="stack-frame-location" onclick="toggleFrameSource(event, '${id}')">
         ${fileName} ${functionName} ${loc}
-      </div>`
+      </button>`
     }
-    return `<button class="stack-frame-location" onclick="toggleFrameSource(event, '${id}')">
+
+    return `<div class="stack-frame-location">
       ${fileName} ${functionName} ${loc}
-    </button>`
+    </div>`
   }
 
   /**
@@ -130,11 +135,20 @@ export class ErrorStack extends BaseComponent<ErrorStackProps> {
     const id = `frame-${index + 1}`
     const label = frame.type === 'app' ? '<span class="frame-label">In App</span>' : ''
     const expandedClass = expandAtIndex === index ? 'expanded' : ''
+    const toggleButton =
+      frame.type !== 'native' && frame.source
+        ? `<button class="stack-frame-toggle-indicator" onclick="toggleFrameSource(event, '${id}')">
+          ${CHEVIRON}
+        </button>`
+        : ''
 
     return `<li class="stack-frame ${expandedClass} stack-frame-${frame.type}" id="${id}">
       <div class="stack-frame-contents">
         ${this.#renderFrameLocation(frame, id, props.ide)}
-        <div class="stack-frame-extras">${label}</div>
+        <div class="stack-frame-extras">
+          ${label}
+          ${toggleButton}
+        </div>
       </div>
       <div class="stack-frame-source">
         ${await props.sourceCodeRenderer(props.error, frame)}
@@ -176,7 +190,11 @@ export class ErrorStack extends BaseComponent<ErrorStackProps> {
             </ul>
           </div>
           <div id="stack-frames-raw">
-            ${dump(props.error.raw, { styles: themes.cssVariables, expand: true })}
+            ${dump(props.error.raw, {
+              styles: themes.cssVariables,
+              expand: true,
+              cspNonce: props.cspNonce,
+            })}
           </div>
         </div>
       </div>

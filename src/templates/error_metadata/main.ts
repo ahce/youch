@@ -21,9 +21,9 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
   /**
    * Formats the error row value
    */
-  #formatRowValue(value: any, dumpValue?: boolean) {
+  #formatRowValue(value: any, dumpValue?: boolean, cspNonce?: string) {
     if (dumpValue === true) {
-      return dump(value, { styles: themes.cssVariables })
+      return dump(value, { styles: themes.cssVariables, cspNonce })
     }
 
     if (this.#primitives.includes(typeof value) || value === null) {
@@ -37,7 +37,7 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
    * Returns HTML fragment with HTML table containing rows
    * metadata section rows
    */
-  #renderRows(rows: ErrorMetadataRow[]) {
+  #renderRows(rows: ErrorMetadataRow[], cspNonce?: string) {
     return `<table class="card-table">
       <tbody>
         ${rows
@@ -45,7 +45,7 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
             return `<tr>
               <td class="table-key">${row.key}</td>
               <td class="table-value">
-                ${this.#formatRowValue(row.value, row.dump)}
+                ${this.#formatRowValue(row.value, row.dump, cspNonce)}
               </td>
             </tr>`
           })
@@ -57,10 +57,14 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
   /**
    * Renders each section with its rows inside a table
    */
-  #renderSection(section: string, rows: ErrorMetadataRow | ErrorMetadataRow[]) {
+  #renderSection(section: string, rows: ErrorMetadataRow | ErrorMetadataRow[], cspNonce?: string) {
     return `<div>
       <h4 class="card-subtitle">${section}</h4>
-      ${Array.isArray(rows) ? this.#renderRows(rows) : this.#formatRowValue(rows.value, rows.dump)}
+      ${
+        Array.isArray(rows)
+          ? this.#renderRows(rows, cspNonce)
+          : this.#formatRowValue(rows.value, rows.dump, cspNonce)
+      }
     </div>`
   }
 
@@ -69,7 +73,8 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
    */
   #renderGroup(
     group: string,
-    sections: { [section: string]: ErrorMetadataRow | ErrorMetadataRow[] }
+    sections: { [section: string]: ErrorMetadataRow | ErrorMetadataRow[] },
+    cspNonce?: string
   ) {
     return `<section>
       <div class="card">
@@ -78,7 +83,7 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
         </div>
         <div class="card-body">
           ${Object.keys(sections)
-            .map((section) => this.#renderSection(section, sections[section]))
+            .map((section) => this.#renderSection(section, sections[section], cspNonce))
             .join('\n')}
         </div>
       </div>
@@ -96,6 +101,8 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
       return ''
     }
 
-    return groupsNames.map((group) => this.#renderGroup(group, groups[group])).join('\n')
+    return groupsNames
+      .map((group) => this.#renderGroup(group, groups[group], props.cspNonce))
+      .join('\n')
   }
 }

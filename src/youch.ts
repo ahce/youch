@@ -73,6 +73,7 @@ export class Youch {
     return this.templates.render({
       title: this.#options.title ?? 'An error occurred',
       ide: this.#options.ide ?? process.env.IDE ?? 'vscode',
+      cspNonce: this.#options.cspNonce,
       error: parsedError,
       metadata: this.metadata,
     })

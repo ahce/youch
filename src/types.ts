@@ -16,7 +16,7 @@ export * from 'youch-core/types'
 /**
  * Props accepted by the Layout component
  */
-export type LayoutProps = {
+export type LayoutProps = ComponentSharedProps & {
   title: string
   children: () => string | Promise<string>
 }
@@ -24,7 +24,7 @@ export type LayoutProps = {
 /**
  * Props accepted by the Error stack source component
  */
-export type ErrorStackSourceProps = {
+export type ErrorStackSourceProps = ComponentSharedProps & {
   error: ParsedError
   frame: StackFrame
 }
@@ -32,7 +32,7 @@ export type ErrorStackSourceProps = {
 /**
  * Props accepted by the Error stack component
  */
-export type ErrorStackProps = {
+export type ErrorStackProps = ComponentSharedProps & {
   error: ParsedError
   ide: string
   sourceCodeRenderer: (error: ParsedError, frame: StackFrame) => Promise<string>
@@ -41,7 +41,7 @@ export type ErrorStackProps = {
 /**
  * Props accepted by the Error info component
  */
-export type ErrorInfoProps = {
+export type ErrorInfoProps = ComponentSharedProps & {
   title: string
   error: ParsedError
 }
@@ -49,14 +49,14 @@ export type ErrorInfoProps = {
 /**
  * Props accepted by the Error cause component
  */
-export type ErrorCauseProps = {
+export type ErrorCauseProps = ComponentSharedProps & {
   error: ParsedError
 }
 
 /**
  * Props accepted by the Error metadata component
  */
-export type ErrorMetadataProps = {
+export type ErrorMetadataProps = ComponentSharedProps & {
   metadata: Metadata
 }
 
@@ -77,6 +77,14 @@ export type ErrorMetadataGroups = {
   [group: string]: {
     [section: string]: ErrorMetadataRow | ErrorMetadataRow[]
   }
+}
+
+/**
+ * Props shared with all the components
+ */
+export type ComponentSharedProps = {
+  ide?: string
+  cspNonce?: string
 }
 
 /**
@@ -119,6 +127,11 @@ export type YouchOptions = {
    * - %l is the line number placeholder
    */
   ide?: string
+
+  /**
+   * CSP nonce to define on inline style and script tags
+   */
+  cspNonce?: string
 }
 
 /**
@@ -126,7 +139,7 @@ export type YouchOptions = {
  * rendered using the Templates collection
  */
 export type YouchTemplates = {
-  header: BaseComponent
+  header: BaseComponent<ComponentSharedProps>
   layout: BaseComponent<LayoutProps>
   errorInfo: BaseComponent<ErrorInfoProps>
   errorStack: BaseComponent<ErrorStackProps>

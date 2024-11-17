@@ -37,7 +37,7 @@ createServer(async (req, res) => {
       }
     })
 
-    const youch = new Youch({ title: status?.pharse })
+    const youch = new Youch({ title: status?.pharse, cspNonce: 'fooooo' })
 
     if (error instanceof E_ROUTE_NOT_FOUND) {
       youch.metadata.group('Application', {

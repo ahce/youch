@@ -35,7 +35,10 @@ export class ErrorCause extends BaseComponent<ErrorCauseProps> {
         </div>
         <div class="card-body">
           <div id="error-cause">
-            ${dump(props.error.cause, { styles: themes.cssVariables })}
+            ${dump(props.error.cause, {
+              cspNonce: props.cspNonce,
+              styles: themes.cssVariables,
+            })}
           </div>
         </div>
       </div>
