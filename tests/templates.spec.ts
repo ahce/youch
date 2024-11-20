@@ -135,6 +135,9 @@ test.group('Templates', () => {
       async render(props: CustomErrorInfo['$props']) {
         return `<h1 id="custom-error-message">${props.error.message}</h1>`
       }
+      async print() {
+        return ''
+      }
     }
 
     const error = new Error('Something went wrong', {
