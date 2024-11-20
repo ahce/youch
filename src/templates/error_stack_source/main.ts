@@ -9,10 +9,15 @@
 
 import { extname } from 'node:path'
 import { highlightText, type ShjLanguage } from '@speed-highlight/core'
+import { highlightText as cliHighlightText } from '@speed-highlight/core/terminal'
 
 import { BaseComponent } from '../../component.js'
 import { publicDirURL } from '../../public_dir.js'
+import { stripAnsi, colors } from '../../helpers.js'
 import type { ErrorStackSourceProps } from '../../types.js'
+
+const GUTTER = '┃'
+const POINTER = '❯'
 
 /**
  * Known languages where we expect the errors to happen. All other source
@@ -37,6 +42,10 @@ const LANGS_MAP: Record<string, ShjLanguage> = {
 export class ErrorStackSource extends BaseComponent<ErrorStackSourceProps> {
   cssFile = new URL('./error_stack_source/style.css', publicDirURL)
 
+  /**
+   * The render method is used to output the HTML for the
+   * web view
+   */
   async render(props: ErrorStackSourceProps): Promise<string> {
     const frame = props.frame
 
@@ -93,5 +102,53 @@ export class ErrorStackSource extends BaseComponent<ErrorStackSourceProps> {
     )
 
     return `<pre><code class="shj-lang-js">${highlight}${code}</code></pre>`
+  }
+
+  /**
+   * The print method is used to output the text for the console
+   */
+  async print(props: ErrorStackSourceProps) {
+    const frame = props.frame
+
+    /**
+     * Do not render the source code when the frame type is
+     * native or we are missing the source/filename
+     */
+    if (frame.type === 'native' || !frame.source || !frame.fileName) {
+      return ''
+    }
+
+    /**
+     * Choose the language based on the file extension, or fallback
+     * to the plain language.
+     */
+    const language = LANGS_MAP[extname(frame.fileName)] ?? 'plain'
+
+    /**
+     * Finding the largest line number and its width so that we can
+     * right align all the line numbers
+     */
+    const largestLineNumber = Math.max(...frame.source.map(({ lineNumber }) => lineNumber!))
+    const lineNumberCols = String(largestLineNumber).length
+
+    /**
+     * Highlighting the source code snippet
+     */
+    const code = frame.source.map((chunk) => chunk.chunk).join('\n')
+    const highlighted = await cliHighlightText(code, language)
+
+    return `\n\n${highlighted
+      .split('\n')
+      .map((line, index) => {
+        const lineNumber = frame.source![index].lineNumber
+        const alignedLineNumber = String(lineNumber).padStart(lineNumberCols, ' ')
+
+        if (lineNumber === props.frame.lineNumber) {
+          return ` ${colors.bgRed(`${POINTER} ${alignedLineNumber} ${GUTTER}  ${stripAnsi(line)}`)}`
+        }
+
+        return `   ${colors.dim(alignedLineNumber)} ${colors.dim(GUTTER)}  ${line}`
+      })
+      .join('\n')}\n`
   }
 }

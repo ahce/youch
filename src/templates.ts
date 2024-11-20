@@ -133,6 +133,20 @@ export class Templates {
   }
 
   /**
+   * Print a known template by its name
+   */
+  async #printTmpl<K extends keyof YouchTemplates>(
+    templateName: K,
+    props: YouchTemplates[K]['$props']
+  ): Promise<string> {
+    const component: BaseComponent<any> = this.#knownTemplates[templateName]
+    if (!component) {
+      throw new Error(`Invalid template "${templateName}"`)
+    }
+    return component.print(props)
+  }
+
+  /**
    * Define a custom component to be used in place of the default component.
    * Overriding components allows you control the HTML layout, styles and
    * the frontend scripts of an HTML fragment.
@@ -191,5 +205,33 @@ export class Templates {
 
     const { scripts, styles } = this.#getStylesAndScripts(props.cspNonce)
     return html.replace('<!-- STYLES -->', styles).replace('<!-- SCRIPTS -->', scripts)
+  }
+
+  /**
+   * Returns the ANSI output to be printed on the terminal
+   */
+  async print(props: { title: string; error: ParsedError; metadata: Metadata }) {
+    const ansiOutput = await this.#printTmpl('layout', {
+      title: props.title,
+      children: async () => {
+        const header = await this.#printTmpl('header', {})
+        const info = await this.#printTmpl('errorInfo', props)
+        const stackTrace = await this.#printTmpl('errorStack', {
+          ide: process.env.EDITOR ?? 'vscode',
+          sourceCodeRenderer: (error, frame) => {
+            return this.#printTmpl('errorStackSource', {
+              error,
+              frame,
+            })
+          },
+          ...props,
+        })
+        const cause = await this.#printTmpl('errorCause', props)
+        const metadata = await this.#printTmpl('errorMetadata', props)
+        return `${header}${info}${stackTrace}${cause}${metadata}`
+      },
+    })
+
+    return ansiOutput
   }
 }

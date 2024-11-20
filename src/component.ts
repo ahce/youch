@@ -80,8 +80,13 @@ export abstract class BaseComponent<Props = undefined> {
   }
 
   /**
-   * The extending class must implement the render method to
-   * return the HTML fragment
+   * The render method is used to output the HTML for the
+   * web view
    */
   abstract render(props: Props): Promise<string>
+
+  /**
+   * The print method is used to output the text for the console
+   */
+  abstract print(props: Props): Promise<string>
 }

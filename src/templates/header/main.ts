@@ -23,6 +23,10 @@ export class Header extends BaseComponent<ComponentSharedProps> {
   cssFile = new URL('./header/style.css', publicDirURL)
   scriptFile = new URL('./header/script.js', publicDirURL)
 
+  /**
+   * The render method is used to output the HTML for the
+   * web view
+   */
   async render(): Promise<string> {
     return `<header id="header">
       <div id="header-actions">
@@ -38,5 +42,12 @@ export class Header extends BaseComponent<ComponentSharedProps> {
         </div>
       </div>
     </header>`
+  }
+
+  /**
+   * The print method is used to output the text for the console
+   */
+  async print() {
+    return ''
   }
 }

@@ -78,4 +78,16 @@ export class Youch {
       metadata: this.metadata,
     })
   }
+
+  /**
+   * Prints error to the console
+   */
+  async print(error: unknown) {
+    const parsedError = await new ErrorParser().parse(error)
+    return this.templates.print({
+      title: this.#options.title ?? 'An error occurred',
+      error: parsedError,
+      metadata: this.metadata,
+    })
+  }
 }

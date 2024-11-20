@@ -22,6 +22,10 @@ export class Layout extends BaseComponent<LayoutProps> {
   cssFile = new URL('./layout/style.css', publicDirURL)
   scriptFile = new URL('./layout/script.js', publicDirURL)
 
+  /**
+   * The render method is used to output the HTML for the
+   * web view
+   */
   async render(props: LayoutProps): Promise<string> {
     return `<!DOCTYPE html>
     <html lang="en">
@@ -38,5 +42,12 @@ export class Layout extends BaseComponent<LayoutProps> {
         </div>
       </body>
     </html>`
+  }
+
+  /**
+   * The print method is used to output the text for the console
+   */
+  async print(props: LayoutProps) {
+    return `\n${await props.children()}\n`
   }
 }

@@ -91,7 +91,8 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
   }
 
   /**
-   * Renders erorr metadata groups
+   * The render method is used to output the HTML for the
+   * web view
    */
   async render(props: ErrorMetadataProps): Promise<string> {
     const groups = props.metadata.toJSON()
@@ -104,5 +105,12 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
     return groupsNames
       .map((group) => this.#renderGroup(group, groups[group], props.cspNonce))
       .join('\n')
+  }
+
+  /**
+   * The print method is used to output the text for the console
+   */
+  async print() {
+    return ''
   }
 }

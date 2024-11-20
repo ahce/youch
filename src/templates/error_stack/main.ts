@@ -7,11 +7,13 @@
  * file that was distributed with this source code.
  */
 
-import { dump, themes } from '@poppinss/dumper/html'
 import type { StackFrame } from 'youch-core/types'
+import { dump, themes } from '@poppinss/dumper/html'
+import { dump as dumpCli } from '@poppinss/dumper/console'
 
-import { BaseComponent } from '../../component.js'
 import { publicDirURL } from '../../public_dir.js'
+import { BaseComponent } from '../../component.js'
+import { htmlEscape, colors } from '../../helpers.js'
 import type { ErrorStackProps } from '../../types.js'
 
 const CHEVIRON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="24" height="24" stroke-width="2">
@@ -39,17 +41,6 @@ const EDITORS: Record<string, string> = {
 export class ErrorStack extends BaseComponent<ErrorStackProps> {
   cssFile = new URL('./error_stack/style.css', publicDirURL)
   scriptFile = new URL('./error_stack/script.js', publicDirURL)
-
-  /**
-   * Light weight HTML escape helper
-   */
-  #htmlEscape(value: string): string {
-    return value
-      .replace(/&/g, '&amp;')
-      .replace(/\\"/g, '&bsol;&quot;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-  }
 
   /**
    * Returns the file's relative name from the CWD
@@ -102,14 +93,17 @@ export class ErrorStack extends BaseComponent<ErrorStackProps> {
    */
   #renderFrameLocation(frame: StackFrame, id: string, ide: string) {
     const { text, href } = this.#getEditorLink(ide, frame)
+
     const fileName = `<a ${href ? `href="${href}"` : ''} class="stack-frame-filepath" title="${text}">
-      ${this.#htmlEscape(text)}
+      ${htmlEscape(text)}
     </a>`
+
     const functionName = frame.functionName
       ? `<span>in <code title="${frame.functionName}">
-        ${this.#htmlEscape(frame.functionName)}
+        ${htmlEscape(frame.functionName)}
       </code></span>`
       : ''
+
     const loc = `<span>at line <code>${frame.lineNumber}:${frame.columnNumber}</code></span>`
 
     if (frame.type !== 'native' && frame.source) {
@@ -156,6 +150,36 @@ export class ErrorStack extends BaseComponent<ErrorStackProps> {
     </li>`
   }
 
+  /**
+   * Returns the ANSI output to print the stack frame on the
+   * terminal
+   */
+  async #printStackFrame(
+    frame: StackFrame,
+    index: number,
+    expandAtIndex: number,
+    props: ErrorStackProps
+  ) {
+    const functionName = frame.functionName!
+    const fileName = this.#getRelativeFileName(frame.fileName!)
+    const loc = `${fileName}:${frame.lineNumber}:${frame.columnNumber}`
+
+    if (index === expandAtIndex) {
+      const codeSnippet = await props.sourceCodeRenderer(props.error, frame)
+      return ` ⁃ at ${functionName} ${colors.yellow(`(${loc})`)}${codeSnippet}`
+    }
+
+    if (frame.type === 'native') {
+      return colors.dim(` ⁃ at ${colors.italic(functionName)} (${colors.italic(loc)})`)
+    }
+
+    return ` ⁃ at ${functionName} ${colors.yellow(`(${loc})`)}`
+  }
+
+  /**
+   * The render method is used to output the HTML for the
+   * web view
+   */
   async render(props: ErrorStackProps): Promise<string> {
     const frames = await Promise.all(
       props.error.frames.map((frame, index) => {
@@ -199,5 +223,35 @@ export class ErrorStack extends BaseComponent<ErrorStackProps> {
         </div>
       </div>
     </section>`
+  }
+
+  /**
+   * The print method is used to output the text for the console
+   */
+  async print(props: ErrorStackProps) {
+    const displayRaw = process.env.YOUCH_RAW
+    if (displayRaw) {
+      const depth = Number.isNaN(Number(displayRaw)) ? 2 : Number(displayRaw)
+      return `\n\n${colors.red('[RAW]')}\n${dumpCli(props.error.raw, {
+        depth: depth,
+        inspectObjectPrototype: false,
+        inspectStaticMembers: false,
+        inspectArrayPrototype: false,
+        collapse: ['ClientRequest'],
+      })}`
+    }
+
+    const frames = await Promise.all(
+      props.error.frames.map((frame, index) => {
+        return this.#printStackFrame(
+          frame,
+          index,
+          this.#getFirstExpandedFrameIndex(props.error.frames),
+          props
+        )
+      })
+    )
+
+    return `\n\n${frames.join('\n')}`
   }
 }
