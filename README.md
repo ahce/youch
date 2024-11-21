@@ -8,6 +8,9 @@
 
 ![](./assets/banner.png)
 
+<!-- START doctoc -->
+<!-- END doctoc -->
+
 ## What is Youch?
 
 Youch is an error-parsing library that pretty prints JavaScript errors on a web page or the terminal.
