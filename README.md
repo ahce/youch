@@ -4,12 +4,13 @@
 
 <br />
 
-[![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url]
+[![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url] [![Downloads Stats][npm-downloads-image]][npm-url]
 
 ![](./assets/banner.png)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
 **Table of Contents**
 
 - [What is Youch?](#what-is-youch)
@@ -442,3 +443,4 @@ Youch is open-sourced software licensed under the [MIT license](LICENSE.md).
 [npm-url]: https://npmjs.org/package/youch 'npm'
 [license-image]: https://img.shields.io/npm/l/youch?color=blueviolet&style=for-the-badge
 [license-url]: LICENSE.md 'license'
+[npm-downloads-image]: https://img.shields.io/npm/dm/youch.svg?style=for-the-badge
