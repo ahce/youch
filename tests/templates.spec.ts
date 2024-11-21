@@ -19,7 +19,7 @@ import { BaseComponent } from '../src/component.js'
 test.group('Templates', () => {
   test('render error to HTML', async ({ expect }) => {
     const templates = new Templates(true)
-    const html = await templates.render({
+    const html = await templates.toHTML({
       title: 'Internal Server Error',
       metadata: new Metadata(),
       error: await new ErrorParser().parse(new Error('Something went wrong')),
@@ -39,7 +39,7 @@ test.group('Templates', () => {
     ;(error as any).hint = 'This is a dummy hint message'
 
     const templates = new Templates(true)
-    const html = await templates.render({
+    const html = await templates.toHTML({
       title: 'Internal Server Error',
       metadata: new Metadata(),
       error: await new ErrorParser().parse(error),
@@ -56,7 +56,7 @@ test.group('Templates', () => {
     const error = new Error('Something went wrong')
 
     const templates = new Templates(true)
-    const html = await templates.render({
+    const html = await templates.toHTML({
       title: 'Internal Server Error',
       metadata: new Metadata(),
       error: await new ErrorParser().parse(error),
@@ -74,7 +74,7 @@ test.group('Templates', () => {
     })
 
     const templates = new Templates(true)
-    const html = await templates.render({
+    const html = await templates.toHTML({
       title: 'Internal Server Error',
       metadata: new Metadata(),
       error: await new ErrorParser().parse(error),
@@ -92,7 +92,7 @@ test.group('Templates', () => {
     const templates = new Templates(true)
     templates.injectStyles('body { color: #fff; }')
 
-    const html = await templates.render({
+    const html = await templates.toHTML({
       title: 'Internal Server Error',
       metadata: new Metadata(),
       error: await new ErrorParser().parse(error),
@@ -113,7 +113,7 @@ test.group('Templates', () => {
     templates.injectStyles('body { color: #fff; }')
     templates.injectStyles('body { background: #000; }')
 
-    const html = await templates.render({
+    const html = await templates.toHTML({
       title: 'Internal Server Error',
       metadata: new Metadata(),
       error: await new ErrorParser().parse(error),
@@ -132,10 +132,10 @@ test.group('Templates', () => {
       title: string
       error: ParsedError
     }> {
-      async render(props: CustomErrorInfo['$props']) {
+      async toHTML(props: CustomErrorInfo['$props']) {
         return `<h1 id="custom-error-message">${props.error.message}</h1>`
       }
-      async print() {
+      async toANSI() {
         return ''
       }
     }
@@ -147,7 +147,7 @@ test.group('Templates', () => {
     const templates = new Templates(true)
     templates.use('errorInfo', new CustomErrorInfo(templates.devMode))
 
-    const html = await templates.render({
+    const html = await templates.toHTML({
       title: 'Internal Server Error',
       metadata: new Metadata(),
       error: await new ErrorParser().parse(error),

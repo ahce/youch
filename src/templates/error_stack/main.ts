@@ -160,27 +160,29 @@ export class ErrorStack extends BaseComponent<ErrorStackProps> {
     expandAtIndex: number,
     props: ErrorStackProps
   ) {
-    const functionName = frame.functionName!
     const fileName = this.#getRelativeFileName(frame.fileName!)
     const loc = `${fileName}:${frame.lineNumber}:${frame.columnNumber}`
 
     if (index === expandAtIndex) {
+      const functionName = frame.functionName ? `at ${frame.functionName} ` : ''
       const codeSnippet = await props.sourceCodeRenderer(props.error, frame)
-      return ` ⁃ at ${functionName} ${colors.yellow(`(${loc})`)}${codeSnippet}`
+      return ` ⁃ ${functionName}${colors.yellow(`(${loc})`)}${codeSnippet}`
     }
 
     if (frame.type === 'native') {
-      return colors.dim(` ⁃ at ${colors.italic(functionName)} (${colors.italic(loc)})`)
+      const functionName = frame.functionName ? `at ${colors.italic(frame.functionName)} ` : ''
+      return colors.dim(` ⁃ ${functionName}(${colors.italic(loc)})`)
     }
 
-    return ` ⁃ at ${functionName} ${colors.yellow(`(${loc})`)}`
+    const functionName = frame.functionName ? `at ${frame.functionName} ` : ''
+    return ` ⁃ ${functionName}${colors.yellow(`(${loc})`)}`
   }
 
   /**
-   * The render method is used to output the HTML for the
+   * The toHTML method is used to output the HTML for the
    * web view
    */
-  async render(props: ErrorStackProps): Promise<string> {
+  async toHTML(props: ErrorStackProps): Promise<string> {
     const frames = await Promise.all(
       props.error.frames.map((frame, index) => {
         return this.#renderStackFrame(
@@ -226,9 +228,9 @@ export class ErrorStack extends BaseComponent<ErrorStackProps> {
   }
 
   /**
-   * The print method is used to output the text for the console
+   * The toANSI method is used to output the text for the console
    */
-  async print(props: ErrorStackProps) {
+  async toANSI(props: ErrorStackProps) {
     const displayRaw = process.env.YOUCH_RAW
     if (displayRaw) {
       const depth = Number.isNaN(Number(displayRaw)) ? 2 : Number(displayRaw)

@@ -91,10 +91,10 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
   }
 
   /**
-   * The render method is used to output the HTML for the
+   * The toHTML method is used to output the HTML for the
    * web view
    */
-  async render(props: ErrorMetadataProps): Promise<string> {
+  async toHTML(props: ErrorMetadataProps): Promise<string> {
     const groups = props.metadata.toJSON()
     const groupsNames = Object.keys(groups)
 
@@ -108,9 +108,9 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
   }
 
   /**
-   * The print method is used to output the text for the console
+   * The toANSI method is used to output the text for the console
    */
-  async print() {
+  async toANSI() {
     return ''
   }
 }

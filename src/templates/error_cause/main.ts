@@ -22,10 +22,10 @@ export class ErrorCause extends BaseComponent<ErrorCauseProps> {
   cssFile = new URL('./error_cause/style.css', publicDirURL)
 
   /**
-   * The render method is used to output the HTML for the
+   * The toHTML method is used to output the HTML for the
    * web view
    */
-  async render(props: ErrorCause['$props']): Promise<string> {
+  async toHTML(props: ErrorCause['$props']): Promise<string> {
     if (!props.error.cause) {
       return ''
     }
@@ -52,9 +52,9 @@ export class ErrorCause extends BaseComponent<ErrorCauseProps> {
   }
 
   /**
-   * The print method is used to output the text for the console
+   * The toANSI method is used to output the text for the console
    */
-  async print(props: ErrorCauseProps) {
+  async toANSI(props: ErrorCauseProps) {
     if (!props.error.cause) {
       return ''
     }

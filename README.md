@@ -10,9 +10,9 @@
 
 ## What is Youch?
 
-Youch is an error parsing library that pretty prints JavaScript errors on a web-page or the terminal.
+Youch is an error-parsing library that prettyprints JavaScript errors on a web page or the terminal.
 
-As you can see in the following screenshots, the Youch output deconstructs the error and properly displays the error message, name, stack trace with source code and a lot more information about the error.
+As you can see in the following screenshots, the Youch output deconstructs the error and properly displays the error message, name, stack trace with source code, and much more information about the error.
 
 <table>
   <tbody>
@@ -53,7 +53,9 @@ yarn add youch@beta
 pnpm add youch@beta
 ```
 
-Once installed. You can render errors to HTML output using the `youch.render` method. The HTML output is self-contained and does not require separate CSS or JavaScript files.
+### Renders errors to HTML output
+
+Once installed. You can render errors to HTML output using the `youch.toHTML` method. The HTML output is self-contained and does not require separate CSS or JavaScript files.
 
 In the following example, we use the `hono` framework and pretty print all the errors in development using Youch. You can replace Hono with any other framework of your choice.
 
@@ -66,21 +68,67 @@ const IN_DEV = process.env.NODE_ENV === 'development'
 
 app.onError(async (error, c) => {
   if (IN_DEV) {
-    const html = await youch.render(error)
+    const youch = new Youch()
+    const html = await youch.toHTML(error)
     return c.html(html)
   }
   return c.text(error.message)
 })
 ```
 
+The `youch.toHTML` method accepts the error as the first argument and the following options as the second argument.
+
+```ts
+await youch.toHTML(error, {
+  title: 'An error occurred',
+  cspNonce: '',
+  offset: 0,
+  ide: 'vscode',
+})
+```
+
+| Option     | Description                                                                                                                                                                           |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`    | Define the title for the error page. It defaults to **"An error has occurred"**                                                                                                       |
+| `cspNonce` | If your application is using CSP protection, then you must provide the [CSP-nonce](https://content-security-policy.com/nonce/) for rendering inline `style` and `script` tags.        |
+| `offset`   | The offset can be used to skip displaying certain frames from the parsed error stack.                                                                                                 |
+| `ide`      | The `ide` option defines the code editor to use for opening the files when the filename anchor tag is clicked. [Learn more about configuring code editors](#configuring-code-editors) |
+
+### Renders errors to ANSI output
+
+You can render an error to ANSI output (for terminal) using the `youch.toANSI` method.
+
+```ts
+try {
+  await performSomeAction()
+} catch (error) {
+  const youch = new Youch()
+  const ansiOutput = await youch.toANSI(error)
+
+  console.error(ansiOutput)
+}
+```
+
+The `youch.toANSI` method accepts the error as the first argument and the following options as the second argument.
+
+```ts
+await youch.toANSI(error, {
+  offset: 0,
+})
+```
+
+| Option   | Description                                                                           |
+| -------- | ------------------------------------------------------------------------------------- |
+| `offset` | The offset can be used to skip displaying certain frames from the parsed error stack. |
+
 ## Anatomy of the error page
 
-Let's de-construct the error page and understand what each section of the web page represents.
+Let's deconstruct the error page and understand what each section of the web page represents.
 
 ### Error info
 
 <details>
-  <summary>View image</summary>
+  <summary>View HTML output</summary>
   
   ![](./assets/error-info.png)
 
@@ -89,7 +137,7 @@ Let's de-construct the error page and understand what each section of the web pa
 The top-most section displays the Error info, which includes:
 
 - The Error class constructor name
-- The Error title set using the `options.title` property.
+- The Error title is set using the `options.title` property.
 - And the Error message (highlighted in red).
 
 See: [How to override the Error info template]()
@@ -103,27 +151,41 @@ See: [How to override the Error info template]()
 
 </details>
 
-The Stack trace section displays individual frames as accordion sections and clicking on the section title will reveal the frame source code. The soure code is not available for native stack frames that are part of the Node.js, Deno, and Bun internals.
+The Stack trace section displays individual frames as accordion sections, and clicking on the section title will reveal the frame source code. The source code is not available for native stack frames that are part of the Node.js, Deno, and Bun internals.
 
 ### Raw output
 
 <details>
-  <summary>View image</summary>
+  <summary>View HTML output</summary>
   
   ![](./assets/stack-raw-output.png)
 
 </details>
 
-Clicking the `Raw` button displays the Error object in its raw form with all the error properties (and not just the stack trace).
+<details>
+  <summary>View ANSI output</summary>
+  
+  ![](./assets/terminal-error.png)
 
-You might find the raw output helpful for errors that contains additional properties. For example: HTTP client libraries like Axios, Got, Undici and others usually contain the HTTP response details within the error object.
+</details>
+
+Clicking the `Raw` button displays the Error object in its raw form, with all the error properties (not just the stack trace).
+
+You might find the raw output helpful for errors that contain additional properties. HTTP client libraries like Axios, Got, Undici, and others usually contain the HTTP response details within the error object.
 
 ### Error cause
 
 <details>
-  <summary>View image</summary>
+  <summary>View HTML output</summary>
   
   ![](./assets/error-cause.png)
+
+</details>
+
+<details>
+  <summary>View ANSI output</summary>
+  
+  ![](./assets/terminal-error-cause.png)
 
 </details>
 
@@ -133,7 +195,7 @@ You might find the raw output helpful for errors that contains additional proper
 
 Metadata refers to any additional data that you want to display on the error page. It could be the HTTP request headers, the logged-in user info, or the list of available application routes.
 
-Metadata is structured as groups and sections. Each section contains an array of rows and each row is composed of a `key-value` pair.
+Metadata is structured as groups and sections. Each section contains an array of rows, and each row is composed of a `key-value` pair.
 
 In the following example, we display the request headers under the `Request` group and the `Headers` section.
 
@@ -158,9 +220,9 @@ Calling the `youch.group` method multiple times with the same group name will me
 
 ## Using a custom source code loader
 
-Youch reads the source code of files within the stacktrace using the Node.js `fs` module. However, you can override this default and provide a custom source loader using the `youch.sourceLoader` method.
+Youch reads the source code of files within the stack trace using the Node.js `fs` module. However, you can override this default and provide a custom source loader using the `youch.sourceLoader` method.
 
-> Note: The `sourceLoader` is called for every frame within the stack traces. Therefore you must perform the needed checks before attempting to read the source code of a file.
+> Note: The `sourceLoader` is called for every frame within the stack traces. Therefore, you must perform the necessary checks before attempting to read the source code of a file.
 >
 > For example, you must not attempt to read the source code for fileNames pointing to native code.
 
@@ -199,7 +261,7 @@ youch.injectStyles(`
 
 ## Overriding syntax highlighter
 
-Youch uses the [speed-highlight](https://github.com/speed-highlight/core), which is lightweight code highlighting library for JavaScript. If you like you override the syntax highlighter, you can do so by registering a custom component for the `errorStackSource` template.
+Youch uses the [speed-highlight](https://github.com/speed-highlight/core), a lightweight code highlighting library for JavaScript. You can register a custom component for the `errorStackSource` template to override the syntax highlighter.
 
 In the following example, we use [Shiki](https://shiki.matsu.io/) to perform syntax highlighting using a custom component.
 
@@ -261,7 +323,7 @@ class CustomErrorStackSource extends BaseComponent<ErrorStackSourceProps> {
     }`
   }
 
-  async render(props: ErrorStackSourceProps) {
+  async toHTML(props: ErrorStackSourceProps) {
     if (props.frame.source) {
       const code = props.frame.source.map(({ chunk }) => chunk).join('\n')
 
@@ -297,12 +359,40 @@ const youch = new Youch()
  */
 youch.templates.use('errorStackSource', new CustomErrorStackSource(false))
 
-const html = await youch.render(error)
+const html = await youch.toHTML(error)
 ```
+
+## Configuring code editors
+
+When you click the filename anchor tag (displayed in the pretty error stack section), Youch will attempt to open the given file inside a pre-configured code editor (defaults to `vscode`).
+
+You can specify which code editor to use via the `ide` option. Following is the list of support code editors.
+
+- textmate
+- macvim
+- emacs
+- sublime
+- phpstorm
+- atom
+- vscode
+
+If you prefer to use a different code editor, you can specify its URL via the `ide` option. Make sure the URL contains the `%f` placeholder for the filename and the `%l` placeholder for the line number.
+
+```ts
+await youch.toHTML(error, {
+  ide: 'mvim://open?url=file://%f&line=%l',
+})
+```
+
+### How do you detect the user's code editor?
+
+Youch relies on the `process.env.IDE` environment variable to detect the user's code editor and falls back to `vscode` if the environment variable is not defined.
+
+However, you can use any detection logic and specify the detect code editor via the `ide` option. For example, In the case of AdonisJS, we configure the code editor within the `.env` file using the `ADONIS_IDE` environment variable.
 
 ## Contributing
 
-One of the primary goals of Poppinss is to have a vibrant community of users and contributors who believes in the principles of the framework.
+One of the primary goals of Poppinss is to have a vibrant community of users and contributors who believe in the principles of the framework.
 
 We encourage you to read the [contribution guide](https://github.com/poppinss/.github/blob/main/docs/CONTRIBUTING.md) before contributing to the framework.
 

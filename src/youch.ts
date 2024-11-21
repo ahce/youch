@@ -12,18 +12,13 @@ import type { Parser, SourceLoader, Transformer } from 'youch-core/types'
 
 import { Metadata } from './metadata.js'
 import { Templates } from './templates.js'
-import type { YouchOptions } from './types.js'
+import { YouchANSIOptions, YouchHTMLOptions } from './types.js'
 
 /**
  * Youch exposes the API to render errors to HTML output
  */
 export class Youch {
-  #options: YouchOptions
   #errorParser = new ErrorParser()
-
-  constructor(options?: YouchOptions) {
-    this.#options = options ?? {}
-  }
 
   /**
    * Manage templates used for converting error to the HTML
@@ -68,24 +63,28 @@ export class Youch {
   /**
    * Render error to HTML
    */
-  async render(error: unknown) {
-    const parsedError = await new ErrorParser().parse(error)
-    return this.templates.render({
-      title: this.#options.title ?? 'An error occurred',
-      ide: this.#options.ide ?? process.env.IDE ?? 'vscode',
-      cspNonce: this.#options.cspNonce,
+  async toHTML(error: unknown, options?: YouchHTMLOptions) {
+    options = { ...options }
+
+    const parsedError = await new ErrorParser({ offset: options.offset }).parse(error)
+    return this.templates.toHTML({
+      title: options.title ?? 'An error has occurred',
+      ide: options.ide ?? process.env.IDE ?? 'vscode',
+      cspNonce: options.cspNonce,
       error: parsedError,
       metadata: this.metadata,
     })
   }
 
   /**
-   * Prints error to the console
+   * Render error to ANSI output
    */
-  async print(error: unknown) {
-    const parsedError = await new ErrorParser().parse(error)
-    return this.templates.print({
-      title: this.#options.title ?? 'An error occurred',
+  async toANSI(error: unknown, options?: YouchANSIOptions) {
+    options = { ...options }
+    const parsedError = await new ErrorParser({ offset: options.offset }).parse(error)
+
+    return this.templates.toANSI({
+      title: '',
       error: parsedError,
       metadata: this.metadata,
     })

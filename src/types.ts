@@ -88,9 +88,24 @@ export type ComponentSharedProps = {
 }
 
 /**
- * Set of options accepted by the Youch class constructor
+ * Collection of known templates. Only these templates can be
+ * rendered using the Templates collection
  */
-export type YouchOptions = {
+export type YouchTemplates = {
+  header: BaseComponent<ComponentSharedProps>
+  layout: BaseComponent<LayoutProps>
+  errorInfo: BaseComponent<ErrorInfoProps>
+  errorStack: BaseComponent<ErrorStackProps>
+  errorStackSource: BaseComponent<ErrorStackSourceProps>
+  errorCause: BaseComponent<ErrorCauseProps>
+  errorMetadata: BaseComponent<ErrorMetadataProps>
+}
+
+/**
+ * Set of options accepted by Youch when rendering error
+ * to HTML
+ */
+export type YouchHTMLOptions = {
   /**
    * Define the offset to skip certain stack frames from
    * the top
@@ -135,15 +150,13 @@ export type YouchOptions = {
 }
 
 /**
- * Collection of known templates. Only these templates can be
- * rendered using the Templates collection
+ * Set of options accepted by Youch when rendering error
+ * to ANSI output
  */
-export type YouchTemplates = {
-  header: BaseComponent<ComponentSharedProps>
-  layout: BaseComponent<LayoutProps>
-  errorInfo: BaseComponent<ErrorInfoProps>
-  errorStack: BaseComponent<ErrorStackProps>
-  errorStackSource: BaseComponent<ErrorStackSourceProps>
-  errorCause: BaseComponent<ErrorCauseProps>
-  errorMetadata: BaseComponent<ErrorMetadataProps>
+export type YouchANSIOptions = {
+  /**
+   * Define the offset to skip certain stack frames from
+   * the top
+   */
+  offset?: number
 }

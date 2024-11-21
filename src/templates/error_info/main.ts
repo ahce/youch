@@ -24,10 +24,10 @@ export class ErrorInfo extends BaseComponent<ErrorInfoProps> {
   cssFile = new URL('./error_info/style.css', publicDirURL)
 
   /**
-   * The render method is used to output the HTML for the
+   * The toHTML method is used to output the HTML for the
    * web view
    */
-  async render(props: ErrorInfoProps): Promise<string> {
+  async toHTML(props: ErrorInfoProps): Promise<string> {
     return `<section>
       <h4 id="error-name">${props.error.name}</h4>
       <h1 id="error-title">${props.title}</h1>
@@ -53,9 +53,9 @@ export class ErrorInfo extends BaseComponent<ErrorInfoProps> {
   }
 
   /**
-   * The print method is used to output the text for the console
+   * The toANSI method is used to output the text for the console
    */
-  async print(props: ErrorInfoProps) {
+  async toANSI(props: ErrorInfoProps) {
     const errorMessage = colors.red(
       `ℹ ${wordWrap(`${props.error.name}: ${props.error.message}`, {
         width: process.stdout.columns,

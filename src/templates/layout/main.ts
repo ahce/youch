@@ -23,10 +23,10 @@ export class Layout extends BaseComponent<LayoutProps> {
   scriptFile = new URL('./layout/script.js', publicDirURL)
 
   /**
-   * The render method is used to output the HTML for the
+   * The toHTML method is used to output the HTML for the
    * web view
    */
-  async render(props: LayoutProps): Promise<string> {
+  async toHTML(props: LayoutProps): Promise<string> {
     return `<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -45,9 +45,9 @@ export class Layout extends BaseComponent<LayoutProps> {
   }
 
   /**
-   * The print method is used to output the text for the console
+   * The toANSI method is used to output the text for the console
    */
-  async print(props: LayoutProps) {
+  async toANSI(props: LayoutProps) {
     return `\n${await props.children()}\n`
   }
 }

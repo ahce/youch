@@ -1,3 +1,12 @@
+/*
+ * youch
+ *
+ * (c) Poppinss
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 import cookie from 'cookie'
 import { createServer } from 'node:http'
 import { createError } from '@poppinss/exception'
@@ -37,7 +46,7 @@ createServer(async (req, res) => {
       }
     })
 
-    const youch = new Youch({ title: status?.pharse, cspNonce: 'fooooo' })
+    const youch = new Youch()
 
     if (error instanceof E_ROUTE_NOT_FOUND) {
       youch.metadata.group('Application', {
@@ -54,9 +63,11 @@ createServer(async (req, res) => {
       headers,
     })
 
-    const html = await youch.render(error)
+    const html = await youch.toHTML(error, { title: status?.pharse, cspNonce: 'fooooo' })
     res.writeHead(statusCode, { 'content-type': 'text/html' })
     res.write(html)
     res.end()
   }
-}).listen(3000)
+}).listen(3000, () => {
+  console.log('Listening on http://localhost:3000')
+})

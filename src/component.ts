@@ -80,13 +80,13 @@ export abstract class BaseComponent<Props = undefined> {
   }
 
   /**
-   * The render method is used to output the HTML for the
+   * The toHTML method is used to output the HTML for the
    * web view
    */
-  abstract render(props: Props): Promise<string>
+  abstract toHTML(props: Props): Promise<string>
 
   /**
-   * The print method is used to output the text for the console
+   * The toANSI method is used to output the text for the console
    */
-  abstract print(props: Props): Promise<string>
+  abstract toANSI(props: Props): Promise<string>
 }

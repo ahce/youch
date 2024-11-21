@@ -24,10 +24,10 @@ export class Header extends BaseComponent<ComponentSharedProps> {
   scriptFile = new URL('./header/script.js', publicDirURL)
 
   /**
-   * The render method is used to output the HTML for the
+   * The toHTML method is used to output the HTML for the
    * web view
    */
-  async render(): Promise<string> {
+  async toHTML(): Promise<string> {
     return `<header id="header">
       <div id="header-actions">
         <div id="toggle-theme-container">
@@ -45,9 +45,9 @@ export class Header extends BaseComponent<ComponentSharedProps> {
   }
 
   /**
-   * The print method is used to output the text for the console
+   * The toANSI method is used to output the text for the console
    */
-  async print() {
+  async toANSI() {
     return ''
   }
 }

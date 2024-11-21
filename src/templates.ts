@@ -117,9 +117,9 @@ export class Templates {
   }
 
   /**
-   * Renders a known template by its name
+   * Returns the HTML for a given template
    */
-  async #renderTmpl<K extends keyof YouchTemplates>(
+  async #tmplToHTML<K extends keyof YouchTemplates>(
     templateName: K,
     props: YouchTemplates[K]['$props']
   ): Promise<string> {
@@ -129,13 +129,13 @@ export class Templates {
     }
 
     await this.#collectStylesAndScripts(templateName)
-    return component.render(props)
+    return component.toHTML(props)
   }
 
   /**
-   * Print a known template by its name
+   * Returns the ANSI output for a given template
    */
-  async #printTmpl<K extends keyof YouchTemplates>(
+  async #tmplToANSI<K extends keyof YouchTemplates>(
     templateName: K,
     props: YouchTemplates[K]['$props']
   ): Promise<string> {
@@ -143,7 +143,7 @@ export class Templates {
     if (!component) {
       throw new Error(`Invalid template "${templateName}"`)
     }
-    return component.print(props)
+    return component.toANSI(props)
   }
 
   /**
@@ -171,24 +171,24 @@ export class Templates {
   /**
    * Returns the HTML output for the given parsed error
    */
-  async render(props: {
+  async toHTML(props: {
     title: string
     ide?: string
     cspNonce?: string
     error: ParsedError
     metadata: Metadata
   }) {
-    const html = await this.#renderTmpl('layout', {
+    const html = await this.#tmplToHTML('layout', {
       title: props.title,
       ide: props.ide,
       cspNonce: props.cspNonce,
       children: async () => {
-        const header = await this.#renderTmpl('header', props)
-        const info = await this.#renderTmpl('errorInfo', props)
-        const stackTrace = await this.#renderTmpl('errorStack', {
+        const header = await this.#tmplToHTML('header', props)
+        const info = await this.#tmplToHTML('errorInfo', props)
+        const stackTrace = await this.#tmplToHTML('errorStack', {
           ide: process.env.EDITOR ?? 'vscode',
           sourceCodeRenderer: (error, frame) => {
-            return this.#renderTmpl('errorStackSource', {
+            return this.#tmplToHTML('errorStackSource', {
               error,
               frame,
               ide: props.ide,
@@ -197,8 +197,8 @@ export class Templates {
           },
           ...props,
         })
-        const cause = await this.#renderTmpl('errorCause', props)
-        const metadata = await this.#renderTmpl('errorMetadata', props)
+        const cause = await this.#tmplToHTML('errorCause', props)
+        const metadata = await this.#tmplToHTML('errorMetadata', props)
         return `${header}${info}${stackTrace}${cause}${metadata}`
       },
     })
@@ -210,24 +210,24 @@ export class Templates {
   /**
    * Returns the ANSI output to be printed on the terminal
    */
-  async print(props: { title: string; error: ParsedError; metadata: Metadata }) {
-    const ansiOutput = await this.#printTmpl('layout', {
+  async toANSI(props: { title: string; error: ParsedError; metadata: Metadata }) {
+    const ansiOutput = await this.#tmplToANSI('layout', {
       title: props.title,
       children: async () => {
-        const header = await this.#printTmpl('header', {})
-        const info = await this.#printTmpl('errorInfo', props)
-        const stackTrace = await this.#printTmpl('errorStack', {
+        const header = await this.#tmplToANSI('header', {})
+        const info = await this.#tmplToANSI('errorInfo', props)
+        const stackTrace = await this.#tmplToANSI('errorStack', {
           ide: process.env.EDITOR ?? 'vscode',
           sourceCodeRenderer: (error, frame) => {
-            return this.#printTmpl('errorStackSource', {
+            return this.#tmplToANSI('errorStackSource', {
               error,
               frame,
             })
           },
           ...props,
         })
-        const cause = await this.#printTmpl('errorCause', props)
-        const metadata = await this.#printTmpl('errorMetadata', props)
+        const cause = await this.#tmplToANSI('errorCause', props)
+        const metadata = await this.#tmplToANSI('errorMetadata', props)
         return `${header}${info}${stackTrace}${cause}${metadata}`
       },
     })

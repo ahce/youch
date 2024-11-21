@@ -43,10 +43,10 @@ export class ErrorStackSource extends BaseComponent<ErrorStackSourceProps> {
   cssFile = new URL('./error_stack_source/style.css', publicDirURL)
 
   /**
-   * The render method is used to output the HTML for the
+   * The toHTML method is used to output the HTML for the
    * web view
    */
-  async render(props: ErrorStackSourceProps): Promise<string> {
+  async toHTML(props: ErrorStackSourceProps): Promise<string> {
     const frame = props.frame
 
     /**
@@ -105,9 +105,9 @@ export class ErrorStackSource extends BaseComponent<ErrorStackSourceProps> {
   }
 
   /**
-   * The print method is used to output the text for the console
+   * The toANSI method is used to output the text for the console
    */
-  async print(props: ErrorStackSourceProps) {
+  async toANSI(props: ErrorStackSourceProps) {
     const frame = props.frame
 
     /**
@@ -134,7 +134,7 @@ export class ErrorStackSource extends BaseComponent<ErrorStackSourceProps> {
     /**
      * Highlighting the source code snippet
      */
-    const code = frame.source.map((chunk) => chunk.chunk).join('\n')
+    const code = frame.source.map(({ chunk }) => chunk).join('\n')
     const highlighted = await cliHighlightText(code, language)
 
     return `\n\n${highlighted
