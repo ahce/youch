@@ -10,9 +10,9 @@
 
 ## What is Youch?
 
-Youch is an error-parsing library that prettyprints JavaScript errors on a web page or the terminal.
+Youch is an error-parsing library that pretty prints JavaScript errors on a web page or the terminal.
 
-As you can see in the following screenshots, the Youch output deconstructs the error and properly displays the error message, name, stack trace with source code, and much more information about the error.
+As you can see in the following screenshots, Youch deconstructs the error and properly displays the **error message**, **name**, **stack trace** with source code, and a lot more information about the error.
 
 <table>
   <tbody>
@@ -39,7 +39,7 @@ As you can see in the following screenshots, the Youch output deconstructs the e
   </tbody>
 <table>
 
-## Basic usage
+## Usage
 
 Install the package from the npm packages registry as follows.
 
@@ -53,9 +53,9 @@ yarn add youch@beta
 pnpm add youch@beta
 ```
 
-### Renders errors to HTML output
+### Render error to HTML output
 
-Once installed. You can render errors to HTML output using the `youch.toHTML` method. The HTML output is self-contained and does not require separate CSS or JavaScript files.
+You can render errors to HTML output using the `youch.toHTML` method. The HTML output is self-contained and does not require separate CSS or JavaScript files.
 
 In the following example, we use the `hono` framework and pretty print all the errors in development using Youch. You can replace Hono with any other framework of your choice.
 
@@ -87,14 +87,14 @@ await youch.toHTML(error, {
 })
 ```
 
-| Option     | Description                                                                                                                                                                           |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `title`    | Define the title for the error page. It defaults to **"An error has occurred"**                                                                                                       |
-| `cspNonce` | If your application is using CSP protection, then you must provide the [CSP-nonce](https://content-security-policy.com/nonce/) for rendering inline `style` and `script` tags.        |
-| `offset`   | The offset can be used to skip displaying certain frames from the parsed error stack.                                                                                                 |
-| `ide`      | The `ide` option defines the code editor to use for opening the files when the filename anchor tag is clicked. [Learn more about configuring code editors](#configuring-code-editors) |
+| Option     | Description                                                                                                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `title`    | Define the title for the error page. It defaults to **"An error has occurred"**                                                                                                |
+| `cspNonce` | If your application is using CSP protection, then you must provide the [CSP-nonce](https://content-security-policy.com/nonce/) for rendering inline `style` and `script` tags. |
+| `offset`   | The offset can be used to skip displaying certain frames from the parsed error stack.                                                                                          |
+| `ide`      | The `ide` option defines the code editor for opening the files when the filename anchor tag is clicked. [Learn more about configuring code editors](#configuring-code-editors) |
 
-### Renders errors to ANSI output
+### Render error to ANSI output
 
 You can render an error to ANSI output (for terminal) using the `youch.toANSI` method.
 
@@ -123,12 +123,12 @@ await youch.toANSI(error, {
 
 ## Anatomy of the error page
 
-Let's deconstruct the error page and understand what each section of the web page represents.
+Let's deconstruct the error page and understand what each section of the output represents.
 
 ### Error info
 
 <details>
-  <summary>View HTML output</summary>
+  <summary><strong>View HTML output</strong></summary>
   
   ![](./assets/error-info.png)
 
@@ -136,54 +136,59 @@ Let's deconstruct the error page and understand what each section of the web pag
 
 The top-most section displays the Error info, which includes:
 
-- The Error class constructor name
-- The Error title is set using the `options.title` property.
+- The Error class constructor name.
+- The Error title. It is set using the `options.title` property.
 - And the Error message (highlighted in red).
-
-See: [How to override the Error info template]()
 
 ### Stack trace
 
 <details>
-  <summary>View image</summary>
+  <summary><strong>View HTML output</strong></summary>
   
   ![](./assets/error-stack.png)
 
 </details>
 
-The Stack trace section displays individual frames as accordion sections, and clicking on the section title will reveal the frame source code. The source code is not available for native stack frames that are part of the Node.js, Deno, and Bun internals.
+<details>
+  <summary><strong>View ANSI output</strong></summary>
+  
+  ![](./assets/terminal-error.png)
+
+</details>
+
+The Stack trace section displays individual frames as accordion sections. Clicking on the section title reveals the frame source code. The source code is unavailable for native stack frames that are part of the Node.js, Deno, and Bun internals.
 
 ### Raw output
 
 <details>
-  <summary>View HTML output</summary>
+  <summary><strong>View HTML output</strong></summary>
   
   ![](./assets/stack-raw-output.png)
 
 </details>
 
 <details>
-  <summary>View ANSI output</summary>
+  <summary><strong>View ANSI output</strong></summary>
   
-  ![](./assets/terminal-error.png)
+  ![](./assets/terminal-error-raw.png)
 
 </details>
 
 Clicking the `Raw` button displays the Error object in its raw form, with all the error properties (not just the stack trace).
 
-You might find the raw output helpful for errors that contain additional properties. HTTP client libraries like Axios, Got, Undici, and others usually contain the HTTP response details within the error object.
+The raw output may be helpful for errors that contain additional properties. HTTP client libraries like Axios, Got, Undici, and others usually contain the HTTP response details within the error object.
 
 ### Error cause
 
 <details>
-  <summary>View HTML output</summary>
+  <summary><strong>View HTML output</strong></summary>
   
   ![](./assets/error-cause.png)
 
 </details>
 
 <details>
-  <summary>View ANSI output</summary>
+  <summary><strong>View ANSI output</strong></summary>
   
   ![](./assets/terminal-error-cause.png)
 
@@ -191,7 +196,7 @@ You might find the raw output helpful for errors that contain additional propert
 
 [Error cause](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause) is a standard way to bubble errors while wrapping them within a generic error. Youch displays the error cause as an interactive property within its own section.
 
-### Metadata
+### Metadata (HTML only)
 
 Metadata refers to any additional data that you want to display on the error page. It could be the HTTP request headers, the logged-in user info, or the list of available application routes.
 
@@ -261,7 +266,7 @@ youch.injectStyles(`
 
 ## Overriding syntax highlighter
 
-Youch uses the [speed-highlight](https://github.com/speed-highlight/core), a lightweight code highlighting library for JavaScript. You can register a custom component for the `errorStackSource` template to override the syntax highlighter.
+Youch uses [speed-highlight](https://github.com/speed-highlight/core), a lightweight code highlighting library for JavaScript. To override the syntax highlighter, you can register a custom component for the `errorStackSource` template.
 
 In the following example, we use [Shiki](https://shiki.matsu.io/) to perform syntax highlighting using a custom component.
 
@@ -376,7 +381,7 @@ You can specify which code editor to use via the `ide` option. Following is the 
 - atom
 - vscode
 
-If you prefer to use a different code editor, you can specify its URL via the `ide` option. Make sure the URL contains the `%f` placeholder for the filename and the `%l` placeholder for the line number.
+If you prefer a different code editor, specify its URL via the `ide` option. Make sure the URL contains the `%f` placeholder for the filename and the `%l` placeholder for the line number.
 
 ```ts
 await youch.toHTML(error, {
@@ -388,7 +393,7 @@ await youch.toHTML(error, {
 
 Youch relies on the `process.env.IDE` environment variable to detect the user's code editor and falls back to `vscode` if the environment variable is not defined.
 
-However, you can use any detection logic and specify the detect code editor via the `ide` option. For example, In the case of AdonisJS, we configure the code editor within the `.env` file using the `ADONIS_IDE` environment variable.
+However, you can use any detection logic and specify the detected code editor via the `ide` option. For example, In the case of AdonisJS, we configure the code editor within the `.env` file using the `ADONIS_IDE` environment variable.
 
 ## Contributing
 
