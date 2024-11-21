@@ -8,8 +8,30 @@
 
 ![](./assets/banner.png)
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [What is Youch?](#what-is-youch)
+- [Usage](#usage)
+  - [Render error to HTML output](#render-error-to-html-output)
+  - [Render error to ANSI output](#render-error-to-ansi-output)
+- [Anatomy of the error page](#anatomy-of-the-error-page)
+  - [Error info](#error-info)
+  - [Stack trace](#stack-trace)
+  - [Raw output](#raw-output)
+  - [Error cause](#error-cause)
+  - [Metadata (HTML only)](#metadata-html-only)
+- [Using a custom source code loader](#using-a-custom-source-code-loader)
+- [Injecting custom styles](#injecting-custom-styles)
+- [Overriding syntax highlighter](#overriding-syntax-highlighter)
+- [Configuring code editors](#configuring-code-editors)
+  - [How do you detect the user's code editor?](#how-do-you-detect-the-users-code-editor)
+- [Contributing](#contributing)
+- [Code of Conduct](#code-of-conduct)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## What is Youch?
 
