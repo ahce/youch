@@ -113,6 +113,14 @@ export type YouchHTMLOptions = {
   offset?: number
 
   /**
+   * Number of lines of code to display for the error stack frame.
+   * For example: If you set the frameSourceBuffer=7, then 3 lines
+   * above the error line and 3 lines after the error line will
+   * be displayed.
+   */
+  frameSourceBuffer?: number
+
+  /**
    * Define the error title. It could be the HTTP status
    * text
    */
@@ -159,6 +167,14 @@ export type YouchANSIOptions = {
    * the top
    */
   offset?: number
+
+  /**
+   * Number of lines of code to display for the error stack frame.
+   * For example: If you set the frameSourceBuffer=7, then 3 lines
+   * above the error line and 3 lines after the error line will
+   * be displayed.
+   */
+  frameSourceBuffer?: number
 }
 
 /**
@@ -171,4 +187,12 @@ export type YouchJSONOptions = {
    * the top
    */
   offset?: number
+
+  /**
+   * Number of lines of code to display for the error stack frame.
+   * For example: If you set the frameSourceBuffer=7, then 3 lines
+   * above the error line and 3 lines after the error line will
+   * be displayed.
+   */
+  frameSourceBuffer?: number
 }

@@ -128,8 +128,8 @@
   },
   "prettier": "@adonisjs/prettier-config",
   "dependencies": {
-    "@poppinss/dumper": "^0.6.0",
+    "@poppinss/dumper": "^0.6.1",
     "@speed-highlight/core": "^1.2.6",
-    "youch-core": "^0.2.6"
+    "youch-core": "^0.3.0"
   }
 }
