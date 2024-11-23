@@ -43,7 +43,7 @@ As you can see in the following screenshots, the error presented by Youch is a l
   <tbody>
     <tr>
       <td>
-        <strong>Raw stack trace</strong>
+        <strong>Unformatted stack trace</strong>
       </td>
     </tr>
     <tr>
@@ -53,7 +53,7 @@ As you can see in the following screenshots, the error presented by Youch is a l
     </tr>
     <tr>
       <td>
-        <strong>Youch Output</strong>
+        <strong>Youch output</strong>
       </td>
     </tr>
     <tr>
@@ -165,6 +165,8 @@ The top-most section displays the Error info, which includes:
 
 </details>
 
+---
+
 ### Stack trace
 
 The Stack trace section displays individual frames as accordion sections. Clicking on the section title reveals the frame source code. The source code is unavailable for native stack frames that are part of the Node.js, Deno, and Bun internals.
@@ -176,6 +178,8 @@ The Stack trace section displays individual frames as accordion sections. Clicki
 
 </details>
 
+---
+
 For the ANSI output, only the first frame from the application code is expanded to show the source code.
 
 <details>
@@ -184,6 +188,8 @@ For the ANSI output, only the first frame from the application code is expanded 
   ![](./assets/terminal-error.png)
 
 </details>
+
+---
 
 ### Raw output
 
@@ -198,6 +204,8 @@ The raw output may be helpful for errors that contain additional properties. HTT
 
 </details>
 
+---
+
 In case of ANSI output, you can view the raw output using the `YOUCH_RAW` environment variable. For example: `YOUCH_RAW=true node your-script.js`.
 
 <details>
@@ -206,6 +214,8 @@ In case of ANSI output, you can view the raw output using the `YOUCH_RAW` enviro
   ![](./assets/terminal-error-raw.png)
 
 </details>
+
+---
 
 ### Error cause
 
@@ -218,6 +228,8 @@ In case of ANSI output, you can view the raw output using the `YOUCH_RAW` enviro
 
 </details>
 
+---
+
 For the ANSI output, the nested properties are shown upto the two levels deep. However, you can adjust the depth using the `YOUCH_CAUSE` environment variable. For example: `YOUCH_CAUSE=4 node your-script.js`.
 
 <details>
@@ -226,6 +238,8 @@ For the ANSI output, the nested properties are shown upto the two levels deep. H
   ![](./assets/terminal-error-cause.png)
 
 </details>
+
+---
 
 ### Metadata (HTML only)
 
