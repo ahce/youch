@@ -220,6 +220,9 @@ export class ErrorStack extends BaseComponent<ErrorStackProps> {
               styles: themes.cssVariables,
               expand: true,
               cspNonce: props.cspNonce,
+              inspectObjectPrototype: false,
+              inspectStaticMembers: false,
+              inspectArrayPrototype: false,
             })}
           </div>
         </div>
@@ -239,7 +242,6 @@ export class ErrorStack extends BaseComponent<ErrorStackProps> {
         inspectObjectPrototype: false,
         inspectStaticMembers: false,
         inspectArrayPrototype: false,
-        collapse: ['ClientRequest'],
       })}`
     }
 

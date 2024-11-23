@@ -44,6 +44,9 @@ export class ErrorCause extends BaseComponent<ErrorCauseProps> {
             ${dump(props.error.cause, {
               cspNonce: props.cspNonce,
               styles: themes.cssVariables,
+              inspectObjectPrototype: false,
+              inspectStaticMembers: false,
+              inspectArrayPrototype: false,
             })}
           </div>
         </div>
