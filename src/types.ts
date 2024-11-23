@@ -160,3 +160,15 @@ export type YouchANSIOptions = {
    */
   offset?: number
 }
+
+/**
+ * Set of options accepted by Youch when rendering error
+ * to JSON output
+ */
+export type YouchJSONOptions = {
+  /**
+   * Define the offset to skip certain stack frames from
+   * the top
+   */
+  offset?: number
+}

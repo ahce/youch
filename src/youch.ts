@@ -12,7 +12,7 @@ import type { Parser, SourceLoader, Transformer } from 'youch-core/types'
 
 import { Metadata } from './metadata.js'
 import { Templates } from './templates.js'
-import { YouchANSIOptions, YouchHTMLOptions } from './types.js'
+import { YouchANSIOptions, YouchHTMLOptions, YouchJSONOptions } from './types.js'
 
 /**
  * Youch exposes the API to render errors to HTML output
@@ -58,6 +58,14 @@ export class Youch {
   useTransformer(transformer: Transformer): this {
     this.#errorParser.useTransformer(transformer)
     return this
+  }
+
+  /**
+   * Parses error to JSON
+   */
+  async toJSON(error: unknown, options?: YouchJSONOptions) {
+    options = { ...options }
+    return new ErrorParser({ offset: options.offset }).parse(error)
   }
 
   /**
