@@ -9,7 +9,7 @@
   "files": [
     "build",
     "!build/bin",
-    "!build/example",
+    "!build/examples",
     "!build/tests"
   ],
   "main": "build/index.js",
