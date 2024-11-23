@@ -10,6 +10,7 @@
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
 **Table of Contents**
 
 - [What is Youch?](#what-is-youch)
@@ -37,7 +38,7 @@
 
 Youch is an error-parsing library that pretty prints JavaScript errors on a web page or the terminal.
 
-As you can see in the following screenshots, Youch deconstructs the error and properly displays the **error message**, **name**, **stack trace** with source code, and a lot more information about the error.
+As you can see in the following screenshots, the error presented by Youch is a lot more readable and presentable in comparison to the unformatted stack trace.
 
 <table>
   <tbody>
@@ -152,6 +153,12 @@ Let's deconstruct the error page and understand what each section of the output 
 
 ### Error info
 
+The top-most section displays the Error info, which includes:
+
+- The Error class constructor name.
+- The Error title. It is set using the `options.title` property.
+- And the Error message (highlighted in red).
+
 <details>
   <summary><strong>View HTML output</strong></summary>
   
@@ -159,13 +166,9 @@ Let's deconstruct the error page and understand what each section of the output 
 
 </details>
 
-The top-most section displays the Error info, which includes:
-
-- The Error class constructor name.
-- The Error title. It is set using the `options.title` property.
-- And the Error message (highlighted in red).
-
 ### Stack trace
+
+The Stack trace section displays individual frames as accordion sections. Clicking on the section title reveals the frame source code. The source code is unavailable for native stack frames that are part of the Node.js, Deno, and Bun internals.
 
 <details>
   <summary><strong>View HTML output</strong></summary>
@@ -174,6 +177,8 @@ The top-most section displays the Error info, which includes:
 
 </details>
 
+For the ANSI output, only the first frame from the application code is expanded to show the source code.
+
 <details>
   <summary><strong>View ANSI output</strong></summary>
   
@@ -181,9 +186,11 @@ The top-most section displays the Error info, which includes:
 
 </details>
 
-The Stack trace section displays individual frames as accordion sections. Clicking on the section title reveals the frame source code. The source code is unavailable for native stack frames that are part of the Node.js, Deno, and Bun internals.
-
 ### Raw output
+
+Clicking the `Raw` button displays the Error object in its raw form, with all the error properties (not just the stack trace).
+
+The raw output may be helpful for errors that contain additional properties. HTTP client libraries like Axios, Got, Undici, and others usually contain the HTTP response details within the error object.
 
 <details>
   <summary><strong>View HTML output</strong></summary>
@@ -192,6 +199,8 @@ The Stack trace section displays individual frames as accordion sections. Clicki
 
 </details>
 
+In case of ANSI output, you can view the raw output using the `YOUCH_RAW` environment variable. For example: `YOUCH_RAW=true node your-script.js`.
+
 <details>
   <summary><strong>View ANSI output</strong></summary>
   
@@ -199,11 +208,9 @@ The Stack trace section displays individual frames as accordion sections. Clicki
 
 </details>
 
-Clicking the `Raw` button displays the Error object in its raw form, with all the error properties (not just the stack trace).
-
-The raw output may be helpful for errors that contain additional properties. HTTP client libraries like Axios, Got, Undici, and others usually contain the HTTP response details within the error object.
-
 ### Error cause
+
+[Error cause](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause) is a standard way to bubble errors while wrapping them within a generic error. Youch displays the error cause as an interactive property within its own section.
 
 <details>
   <summary><strong>View HTML output</strong></summary>
@@ -212,14 +219,14 @@ The raw output may be helpful for errors that contain additional properties. HTT
 
 </details>
 
+For the ANSI output, the nested properties are shown upto the two levels deep. However, you can adjust the depth using the `YOUCH_CAUSE` environment variable. For example: `YOUCH_CAUSE=4 node your-script.js`.
+
 <details>
   <summary><strong>View ANSI output</strong></summary>
   
   ![](./assets/terminal-error-cause.png)
 
 </details>
-
-[Error cause](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause) is a standard way to bubble errors while wrapping them within a generic error. Youch displays the error cause as an interactive property within its own section.
 
 ### Metadata (HTML only)
 
@@ -297,14 +304,14 @@ In the following example, we use [Shiki](https://shiki.matsu.io/) to perform syn
 
 ```ts
 import { codeToHtml } from 'shiki'
-import { BaseComponent } from 'youch'
 import { ErrorStackSourceProps } from 'youch/types'
+import { ErrorStackSource } from 'youch/templates/error_stack_source'
 
 /**
  * A custom component that uses shiki to render the source
  * code snippet for a stack frame
  */
-class CustomErrorStackSource extends BaseComponent<ErrorStackSourceProps> {
+class CustomErrorStackSource<ErrorStackSourceProps> extends ErrorStackSource {
   /**
    * Return the styles you want to inject from this
    * component
