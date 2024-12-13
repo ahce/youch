@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-import cookie from 'cookie'
 import { createServer } from 'node:http'
 import { createError } from '@poppinss/exception'
 
