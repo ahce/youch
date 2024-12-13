@@ -16,7 +16,7 @@ test.group('Youch', () => {
   test('convert error toJSON', async ({ assert }) => {
     const parsedError = await new Youch().toJSON(new Error('Something went wrong'))
     assert.equal(parsedError.message, 'Something went wrong')
-    assert.equal(parsedError.frames[0].lineNumber, 16)
+    assert.equal(parsedError.frames[0].lineNumber, 17)
   })
 
   test('apply parser to the error', async ({ assert }) => {
@@ -28,7 +28,7 @@ test.group('Youch', () => {
 
     assert.equal(parsedError.message, 'Wrapped')
     assert.equal((parsedError.cause as any).message, 'Something went wrong')
-    assert.equal(parsedError.frames[0].lineNumber, 24)
+    assert.equal(parsedError.frames[0].lineNumber, 25)
   })
 
   test('apply transformer to the error', async ({ assert }) => {
