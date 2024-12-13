@@ -8,7 +8,7 @@
  */
 
 import { ErrorParser } from 'youch-core'
-import type { Parser, SourceLoader, Transformer } from 'youch-core/types'
+import type { Parser, SourceLoader, Transformer, YouchParserOptions } from 'youch-core/types'
 
 import { Metadata } from './metadata.js'
 import { Templates } from './templates.js'
@@ -18,7 +18,12 @@ import { YouchANSIOptions, YouchHTMLOptions, YouchJSONOptions } from './types.js
  * Youch exposes the API to render errors to HTML output
  */
 export class Youch {
-  #errorParser = new ErrorParser()
+  /**
+   * Properties to be shared with the Error parser
+   */
+  #sourceLoader?: SourceLoader
+  #parsers: Parser[] = []
+  #transformers: Transformer[] = []
 
   /**
    * Manage templates used for converting error to the HTML
@@ -32,11 +37,26 @@ export class Youch {
   metadata = new Metadata()
 
   /**
+   * Creates an instance of the ErrorParser and applies the
+   * source loader, parsers and transformers on it
+   */
+  #createErrorParser(options: YouchParserOptions) {
+    const errorParser = new ErrorParser(options)
+    if (this.#sourceLoader) {
+      errorParser.defineSourceLoader(this.#sourceLoader)
+    }
+    this.#parsers.forEach((parser) => errorParser.useParser(parser))
+    this.#transformers.forEach((transformer) => errorParser.useTransformer(transformer))
+
+    return errorParser
+  }
+
+  /**
    * Define custom implementation for loading the source code
    * of a stack frame.
    */
   defineSourceLoader(loader: SourceLoader): this {
-    this.#errorParser.defineSourceLoader(loader)
+    this.#sourceLoader = loader
     return this
   }
 
@@ -46,7 +66,7 @@ export class Youch {
    * modify the error
    */
   useParser(parser: Parser): this {
-    this.#errorParser.useParser(parser)
+    this.#parsers.push(parser)
     return this
   }
 
@@ -56,7 +76,7 @@ export class Youch {
    * properties of the parsed error.
    */
   useTransformer(transformer: Transformer): this {
-    this.#errorParser.useTransformer(transformer)
+    this.#transformers.push(transformer)
     return this
   }
 
@@ -65,7 +85,7 @@ export class Youch {
    */
   async toJSON(error: unknown, options?: YouchJSONOptions) {
     options = { ...options }
-    return new ErrorParser({ offset: options.offset }).parse(error)
+    return this.#createErrorParser({ offset: options.offset }).parse(error)
   }
 
   /**
@@ -74,7 +94,7 @@ export class Youch {
   async toHTML(error: unknown, options?: YouchHTMLOptions) {
     options = { ...options }
 
-    const parsedError = await new ErrorParser({ offset: options.offset }).parse(error)
+    const parsedError = await this.#createErrorParser({ offset: options.offset }).parse(error)
     return this.templates.toHTML({
       title: options.title ?? 'An error has occurred',
       ide: options.ide ?? process.env.IDE ?? 'vscode',
@@ -89,7 +109,7 @@ export class Youch {
    */
   async toANSI(error: unknown, options?: YouchANSIOptions) {
     options = { ...options }
-    const parsedError = await new ErrorParser({ offset: options.offset }).parse(error)
+    const parsedError = await this.#createErrorParser({ offset: options.offset }).parse(error)
 
     return this.templates.toANSI({
       title: '',
