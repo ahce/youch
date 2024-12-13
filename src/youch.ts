@@ -7,6 +7,7 @@
  * file that was distributed with this source code.
  */
 
+import cookie from 'cookie'
 import { ErrorParser } from 'youch-core'
 import type { Parser, SourceLoader, Transformer, YouchParserOptions } from 'youch-core/types'
 
@@ -52,6 +53,45 @@ export class Youch {
   }
 
   /**
+   * Defines the request properties as a metadata group
+   */
+  #defineRequestMetadataGroup(request: YouchHTMLOptions['request']) {
+    if (!request || Object.keys(request).length === 0) {
+      return
+    }
+
+    this.metadata.group('Request', {
+      ...(request.url
+        ? {
+            url: {
+              key: 'URL',
+              value: request.url,
+            },
+          }
+        : {}),
+      ...(request.method
+        ? {
+            method: {
+              key: 'Method',
+              value: request.method,
+            },
+          }
+        : {}),
+      ...(request.headers
+        ? {
+            headers: Object.keys(request.headers).map((key) => {
+              const value = request.headers![key]
+              return {
+                key,
+                value: key === 'cookie' ? { ...cookie.parse(value as string) } : value,
+              }
+            }),
+          }
+        : {}),
+    })
+  }
+
+  /**
    * Define custom implementation for loading the source code
    * of a stack frame.
    */
@@ -93,6 +133,8 @@ export class Youch {
    */
   async toHTML(error: unknown, options?: YouchHTMLOptions) {
     options = { ...options }
+
+    this.#defineRequestMetadataGroup(options.request)
 
     const parsedError = await this.#createErrorParser({ offset: options.offset }).parse(error)
     return this.templates.toHTML({

@@ -38,14 +38,6 @@ createServer(async (req, res) => {
   } catch (error) {
     const statusCode = error.status ?? 500
     const status = HTTP_STATUSES.find((httpStatus) => httpStatus.code === statusCode)
-    const headers = Object.keys(req.headers).map((key) => {
-      const value = req.headers[key]
-      return {
-        key,
-        value: key === 'cookie' ? { ...cookie.parse(value as string) } : value,
-      }
-    })
-
     const youch = new Youch()
 
     if (error instanceof E_ROUTE_NOT_FOUND) {
@@ -59,11 +51,15 @@ createServer(async (req, res) => {
       })
     }
 
-    youch.metadata.group('Request', {
-      headers,
+    const html = await youch.toHTML(error, {
+      title: status?.pharse,
+      cspNonce: 'fooooo',
+      request: {
+        url: req.url,
+        method: req.method,
+        headers: req.headers,
+      },
     })
-
-    const html = await youch.toHTML(error, { title: status?.pharse, cspNonce: 'fooooo' })
     res.writeHead(statusCode, { 'content-type': 'text/html' })
     res.write(html)
     res.end()

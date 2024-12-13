@@ -63,7 +63,7 @@ export class ErrorMetadata extends BaseComponent<ErrorMetadataProps> {
       ${
         Array.isArray(rows)
           ? this.#renderRows(rows, cspNonce)
-          : this.#formatRowValue(rows.value, rows.dump, cspNonce)
+          : `<span>${this.#formatRowValue(rows.value, rows.dump, cspNonce)}</span>`
       }
     </div>`
   }

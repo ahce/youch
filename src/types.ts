@@ -155,6 +155,16 @@ export type YouchHTMLOptions = {
    * CSP nonce to define on inline style and script tags
    */
   cspNonce?: string
+
+  /**
+   * Specify the HTTP request properties to be printed as
+   * metadata under the "Request" group
+   */
+  request?: {
+    url?: string
+    method?: string
+    headers?: Record<string, string | string[] | undefined>
+  }
 }
 
 /**
